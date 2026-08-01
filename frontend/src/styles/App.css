@@ -1,0 +1,178 @@
+/* Estructura general */
+.app {
+  min-height: 100vh;
+}
+
+/* Zona debajo del Header */
+.layout {
+  display: flex;
+  min-height: calc(100vh - 80px);
+}
+
+/* Sidebar */
+.sidebar {
+  width: 240px;
+  min-height: calc(100vh - 80px);
+  padding: 25px 20px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  background-color: #111111;
+  color: white;
+}
+
+/* Contenido principal */
+.main-content {
+  flex: 1;
+  padding: 30px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar li {
+   padding: 12px 10px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.sidebar li:hover{
+    background-color: #222222;
+}
+
+.sidebar {
+    background-color: #111111;
+    color: white;
+}
+
+.sidebar-title {
+    color: white;
+    font-size: 24px;
+    margin-bottom: 30px;
+}
+
+.header {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    box-sizing: border-box;
+    background-color: #111111;
+    color: white;
+    border-bottom: 1px solid #333333;
+}
+
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-brand h1 {
+    font-size: 24px;
+    margin: 0;
+    color: white;
+}
+
+.header-brand span {
+    font-size: 13px;
+    color: #aaaaaa;
+    padding: 3px 7px;
+    border: 1px solid #444444;
+}
+
+.header-user {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.main-content {
+  flex: 1;
+  padding: 30px;
+  box-sizing: border-box;
+  background-color: #f7f7f7;
+}
+
+
+.form-title {  /*titulo de NUEVO PRODUCTO*/
+  font-size: 22px;
+  margin: 0 0 20px;
+  color: #222222;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #dddddd;
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
+  border: none;
+  border-radius: 6px;
+  background-color: #111111;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.form-button:hover {
+  background-color: #333333;
+}
+
+.form-card {
+  background-color: #999999;
+  padding: 25px;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  max-width: 500px;
+  box-sizing: border-box;
+}
+
+.form-card {
+  margin-bottom: 70px;
+}
+.products-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.products-table th {
+  background-color: #111111;
+  color: white;
+  padding: 12px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.products-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e5e5e5;
+  font-size: 14px;
+}
+
+.products-table tbody tr:hover {
+  background-color: #f2f2f2;
+}
+
+.number-column {
+  text-align: right;
+}
