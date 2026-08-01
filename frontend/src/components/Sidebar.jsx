@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function Sidebar(){
     return (
         <aside className="sidebar">
@@ -7,19 +9,51 @@ function Sidebar(){
 
             <nav>
                 <ul>
-                    <li>🏠 Inicio</li>
-                    <li>📦 Productos</li>
-                    <li>🛒 Ventas</li>
-                    <li>👥 Clientes</li>
-                    <li>🚚 Proveedores</li>
-                    <li>💰 Gastos</li>
-                    <li>📊 Reportes</li>
+                    <li>
+                        <Link to="/">
+                        🏠 Inicio
+                        </Link>
+                        </li>
+                    <li>
+                        <Link to="/productos">
+                        📦 Productos 
+                        </Link>
+                        </li>
+                    <li>
+                        <Link to="/ventas">
+                        🛒 Ventas
+                        </Link>
+                        </li>
+                    <li>
+                        <Link to="/clientes">
+                        👥 Clientes
+                        </Link>
+                        </li>
+                    <li>
+                        <Link to="/proveedores">
+                        🚚 Proveedores
+                        </Link>
+                        </li>
+                    <li>
+                        <Link to="/gastos">
+                        💰 Gastos
+                        </Link>
+                        </li>
+                    <li>
+                        <Link to="/reportes">
+                        📊 Reportes
+                        </Link>
+                        </li>
                 </ul>
             </nav>
 
             <div>
                 <ul>
-                    <li>⚙️ Configuracion</li>
+                    <li>
+                        <Link to="/configuracion">
+                        ⚙️ Configuracion
+                        </Link>
+                        </li>
                 </ul>
             </div>
         </aside>

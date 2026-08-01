@@ -176,3 +176,30 @@
 .number-column {
   text-align: right;
 }
+
+.table-card {
+  background-color: #ffffff;
+  padding: 25px;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.table-title {
+  margin: 0 0 20px;
+  font-size: 22px;
+  color: #222222;
+}
+
+/* Enlaces del menú lateral */
+.sidebar a {
+  display: block;
+  text-decoration: none;
+  color: white;
+  width: 100%;
+}
+
+/* Hover */
+.sidebar a:hover {
+  color: white;
+}

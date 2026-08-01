@@ -5,6 +5,15 @@ import TablaProductos from "./components/TablaProductos";
 import FormularioProducto from "./components/FormularioProducto";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
+import Productos from "./pages/Productos";
+import { Routes, Route } from "react-router-dom";
+import Inicio from "./pages/Inicio";
+import Ventas from "./pages/Ventas";
+import Clientes from "./pages/Clientes";
+import Proveedores from "./pages/Proveedores";
+import Gastos from "./pages/Gastos";
+import Reportes from "./pages/Reportes";
+import Configuracion from "./pages/Configuracion";
 
 function App(){
   const [productos, setProductos]= useState([]);
@@ -34,14 +43,34 @@ function App(){
       <Sidebar />
 
       <main className="main-content">
-        <FormularioProducto
-          productoGuardado={productoGuardado}
-        />
 
-        <TablaProductos
-          productos={productos}
+        <Routes>
+
+          <Route
+          path="/"
+          element={<Inicio />}
+            />
+          
+          <Route
+          path="productos"
+          element={
+            <Productos 
+              productos={productos}
+              productoGuardado={productoGuardado}
         />
-      </main>
+          }
+          />
+
+          <Route path="/ventas" element={<Ventas />} />
+          <Route path="/clientes" element={<Clientes />} />
+          <Route path="/proveedores" element={<Proveedores />} />
+          <Route path="/gastos" element={<Gastos />} />
+          <Route path="/reportes" element={<Reportes />} />
+          <Route path="/configuracion" element={<Configuracion />} />
+
+        </Routes>
+    
+</main>
     </div>
   </div>
 );

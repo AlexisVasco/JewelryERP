@@ -1,5 +1,11 @@
 function TablaProductos({ productos}) {
     return (
+        <div className="table-card">
+
+            <h3 className="table-title">
+                Productos Registrados
+            </h3>
+            
     <table className="products-table">
         <thead>
             <tr>
@@ -25,6 +31,7 @@ function TablaProductos({ productos}) {
             ))}
         </tbody>
     </table>
+    </div>
     );
 }
 
