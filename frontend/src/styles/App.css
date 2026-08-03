@@ -203,3 +203,31 @@
 .sidebar a:hover {
   color: white;
 }
+
+/* Enlaces del menú */
+.menu-link {
+  display: block;
+  width: 100%;
+  padding: 12px 10px;
+  border-radius: 8px;
+  color: white;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.menu-link:hover {
+  background-color: #222222;
+}
+
+/* Página activa */
+.menu-link.active {
+  background-color: #333333;
+}
+
+.sidebar li {
+  padding: 0;
+}
+
+.menu-link {
+  padding: 12px 10px;
+}

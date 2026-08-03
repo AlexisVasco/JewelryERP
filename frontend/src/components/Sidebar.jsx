@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 function Sidebar(){
     return (
@@ -10,39 +10,80 @@ function Sidebar(){
             <nav>
                 <ul>
                     <li>
-                        <Link to="/">
+                        <NavLink 
+                            to="/"
+                            className={({ isActive }) =>
+                                isActive ? "menu-link active" : "menu-link"
+                        }
+                        >
                         🏠 Inicio
-                        </Link>
+                        </NavLink>
                         </li>
+
                     <li>
-                        <Link to="/productos">
+                        <NavLink 
+                        to="/productos"
+                        className={({ isActive }) =>
+                            isActive ? "menu-link active" : "menu-link"
+                    }
+                    >
                         📦 Productos 
-                        </Link>
+                        </NavLink>
                         </li>
+
                     <li>
-                        <Link to="/ventas">
+                        <NavLink 
+                        to="/ventas"
+                        className={({ isActive}) =>
+                            isActive ? "menu-link active" : "menu-link"
+                    }
+                    >
                         🛒 Ventas
-                        </Link>
+                        </NavLink>
                         </li>
+
                     <li>
-                        <Link to="/clientes">
+                        <NavLink 
+                        to="/clientes"
+                        className={({ isActive }) =>
+                            isActive ? "menu-link active" : "menu-link"
+                    }
+                    >
                         👥 Clientes
-                        </Link>
+                        </NavLink>
                         </li>
+
                     <li>
-                        <Link to="/proveedores">
+                        <NavLink 
+                        to="/proveedores"
+                        className={({ isActive }) =>
+                            isActive ? "menu-link active" : "menu-link"
+                    }
+                    >
                         🚚 Proveedores
-                        </Link>
+                        </NavLink>
                         </li>
+
                     <li>
-                        <Link to="/gastos">
+                        <NavLink 
+                        to="/gastos"
+                        className={({ isActive }) =>
+                            isActive ? "menu-link active" : "menu-link"
+                    }
+                    >
                         💰 Gastos
-                        </Link>
+                        </NavLink>
                         </li>
+
                     <li>
-                        <Link to="/reportes">
+                        <NavLink 
+                        to="/reportes"
+                        className={({ isActive }) =>
+                            isActive ? "menu-link active" : "menu-link"
+                    }
+                    >
                         📊 Reportes
-                        </Link>
+                        </NavLink>
                         </li>
                 </ul>
             </nav>
@@ -50,9 +91,14 @@ function Sidebar(){
             <div>
                 <ul>
                     <li>
-                        <Link to="/configuracion">
+                        <NavLink 
+                        to="/configuracion"
+                        className={({ isActive }) =>
+                            isActive ? "menu-link active" : "menu-link"
+                    }
+                    >
                         ⚙️ Configuracion
-                        </Link>
+                        </NavLink>
                         </li>
                 </ul>
             </div>
