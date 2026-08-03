@@ -25,8 +25,18 @@ function TablaProductos({
             console.error(error);
 
         }
+        
 
     };
+
+    const formatearPrecio = (valor) => {
+        
+        return new Intl.NumberFormat("es-CO", {
+        style: "currency",
+        currency: "COP",
+        minimumFractionDigits: 0,
+    }).format(valor);
+};
 
     return (
 
@@ -71,11 +81,11 @@ function TablaProductos({
                             </td>
 
                             <td className="number-column">
-                                {producto.precio}
+                                {formatearPrecio(producto.precio)}
                             </td>
 
                             <td className="number-column">
-                                {producto.costo}
+                                {formatearPrecio(producto.costo)}
                             </td>
 
                             <td>
