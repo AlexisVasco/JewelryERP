@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { listarClientes } from "../services/clienteService";
 import { listarProductos } from "../services/productoService";
+import { registrarVenta, listarVentas } from "../services/ventaService";
 
 function Ventas() {
 
@@ -12,10 +13,12 @@ function Ventas() {
 
     const [cantidad, setCantidad] = useState(1);
     const [detalleVenta, setDetalleVenta] = useState([]);
+    const [ventas, setVentas] = useState([]);
 
     useEffect(() => {
         cargarClientes();
         cargarProductos();
+        cargarVentas();
     }, []);
 
     const cargarClientes = async () => {
@@ -36,35 +39,146 @@ function Ventas() {
         }
     };
 
+    const cargarVentas = async () => {
+        try {
+        const respuesta = await listarVentas();
+        setVentas(respuesta.data);
+
+    } catch (error) {
+            console.error(error);
+
+    }
+
+};
+
     const agregarProducto = () => {
 
-        if (!productoSeleccionado) return;
+    if (!productoSeleccionado) return;
 
-        const producto = productos.find(
-            p => p.id === parseInt(productoSeleccionado)
+    const producto = productos.find(
+        p => p.id === parseInt(productoSeleccionado)
+    );
+
+    if (!producto) return;
+
+    const existe = detalleVenta.find(
+        item => item.id === producto.id
+    );
+
+    const cantidadActual = existe ? existe.cantidad : 0;
+
+    if (cantidad + cantidadActual > producto.stock) {
+
+        alert(
+            `Solo hay ${producto.stock} unidades disponibles en inventario.`
         );
 
-        if (!producto) return;
+        return;
+
+    }
+
+    if (existe) {
+
+        const nuevaLista = detalleVenta.map(item => {
+
+            if (item.id === producto.id) {
+
+                const nuevaCantidad = item.cantidad + cantidad;
+
+                return {
+                    ...item,
+                    cantidad: nuevaCantidad,
+                    subtotal: nuevaCantidad * item.precio
+                };
+
+            }
+
+            return item;
+
+        });
+
+        setDetalleVenta(nuevaLista);
+
+    } else {
 
         const nuevoProducto = {
             id: producto.id,
             nombre: producto.nombre,
             precio: producto.precio,
-            cantidad: cantidad,
+            cantidad,
             subtotal: producto.precio * cantidad
         };
 
-        setDetalleVenta([...detalleVenta, nuevoProducto]);
+        setDetalleVenta([
+            ...detalleVenta,
+            nuevoProducto
+        ]);
 
-        setProductoSeleccionado("");
-        setCantidad(1);
+    }
 
-    };
+    setProductoSeleccionado("");
+    setCantidad(1);
+
+};
+
+    const eliminarProducto = (index) => {
+
+        const nuevaLista = detalleVenta.filter(
+                (_, i) => i !== index
+        );
+
+    setDetalleVenta(nuevaLista);
+
+};
 
     const total = detalleVenta.reduce(
         (suma, item) => suma + item.subtotal,
         0
     );
+
+    const guardarVenta = async () => {
+
+    if (!clienteSeleccionado) {
+        alert("Seleccione un cliente");
+        return;
+    }
+
+    if (detalleVenta.length === 0) {
+        alert("Agregue al menos un producto");
+        return;
+    }
+
+    const venta = {
+        clienteId: parseInt(clienteSeleccionado),
+        productos: detalleVenta.map(item => ({
+            productoId: item.id,
+            cantidad: item.cantidad
+        }))
+    };
+
+    try {
+
+        await registrarVenta(venta);
+
+        alert("Venta registrada correctamente");
+
+        setDetalleVenta([]);
+        setClienteSeleccionado("");
+        setProductoSeleccionado("");
+        setCantidad(1);
+        cargarVentas();
+
+        cargarProductos();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Error al registrar la venta");
+
+    }
+
+};
 
     return (
         <div>
@@ -152,12 +266,13 @@ function Ventas() {
 
                     <thead>
 
-                        <tr>
-                            <th>Producto</th>
-                            <th>Cantidad</th>
-                            <th>Precio</th>
-                            <th>Subtotal</th>
-                        </tr>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Subtotal</th>
+                     <th>Acción</th>
+                </tr>
 
                     </thead>
 
@@ -197,6 +312,7 @@ function Ventas() {
                                                 }
                                             ).format(item.precio)}
                                         </td>
+                                        
 
                                         <td>
                                             {new Intl.NumberFormat(
@@ -208,6 +324,15 @@ function Ventas() {
                                                 }
                                             ).format(item.subtotal)}
                                         </td>
+                                        <td>
+
+                                        <button
+                                            onClick={() => eliminarProducto(index)}
+                                            >
+                                            🗑️
+                                        </button>
+
+                                            </td>
 
                                     </tr>
 
@@ -238,11 +363,80 @@ function Ventas() {
 
                 </h2>
 
-                <button className="form-button">
+                <button
+                    className="form-button"
+                    onClick={guardarVenta}
+                >
                     Registrar Venta
+                    
                 </button>
 
             </div>
+
+            <div className="table-card">
+
+    <h3 className="table-title">
+        Historial de Ventas
+    </h3>
+
+    <table className="products-table">
+
+        <thead>
+
+            <tr>
+                <th>ID</th>
+                <th>Cliente</th>
+                <th>Fecha</th>
+                <th>Total</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {
+                ventas.length === 0 ?
+
+                (
+                    <tr>
+                        <td colSpan="4" style={{ textAlign: "center" }}>
+                            No hay ventas registradas
+                        </td>
+                    </tr>
+                )
+
+                :
+
+                ventas.map((venta) => (
+
+                    <tr key={venta.id}>
+
+                        <td>{venta.id}</td>
+
+                        <td>{venta.cliente.nombre}</td>
+
+                        <td>
+                            {new Date(venta.fecha).toLocaleString("es-CO")}
+                        </td>
+
+                        <td>
+                            {new Intl.NumberFormat("es-CO", {
+                                style: "currency",
+                                currency: "COP",
+                                minimumFractionDigits: 0
+                            }).format(venta.total)}
+                        </td>
+
+                    </tr>
+
+                ))
+            }
+
+        </tbody>
+
+    </table>
+
+</div>
 
         </div>
     );
