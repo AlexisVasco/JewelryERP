@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lux.backend.dto.DetalleVentaRequest;
+import com.lux.backend.dto.VentaMesDTO;
 import com.lux.backend.dto.VentaRequest;
 import com.lux.backend.entity.Cliente;
 import com.lux.backend.entity.DetalleVenta;
@@ -16,7 +17,6 @@ import com.lux.backend.repository.ClienteRepository;
 import com.lux.backend.repository.DetalleVentaRepository;
 import com.lux.backend.repository.ProductoRepository;
 import com.lux.backend.repository.VentaRepository;
-
 
 @Service
 public class VentaService {
@@ -36,6 +36,11 @@ public class VentaService {
         this.detalleVentaRepository = detalleVentaRepository;
         this.productoRepository = productoRepository;
         this.clienteRepository = clienteRepository;
+
+    }
+
+    public List<VentaMesDTO> obtenerVentasPorMes() {
+        return ventaRepository.obtenerVentasPorMes();
     }
 
     @Transactional
@@ -73,19 +78,24 @@ public class VentaService {
             detalle.setProducto(producto);
             detalle.setCantidad(item.getCantidad());
             detalle.setPrecio(producto.getPrecio().doubleValue());
-            detalle.setSubtotal(producto.getPrecio().doubleValue() * item.getCantidad());
+            detalle.setSubtotal(
+                    producto.getPrecio().doubleValue() * item.getCantidad()
+            );
 
             total += detalle.getSubtotal();
 
             detalleVentaRepository.save(detalle);
+
         }
 
         venta.setTotal(total);
 
         ventaRepository.save(venta);
+
     }
+
     public List<Venta> listarVentas() {
-    return ventaRepository.findAllByOrderByFechaDesc();
-}
+        return ventaRepository.findAllByOrderByFechaDesc();
+    }
 
 }

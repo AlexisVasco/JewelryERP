@@ -17,6 +17,11 @@ public class UsuarioService {
     }
 
     public Usuario guardarUsuario(Usuario usuario) {
+
+        if (usuario.getActivo() == null) {
+            usuario.setActivo(true);
+        }
+
         return usuarioRepository.save(usuario);
     }
 
@@ -27,6 +32,10 @@ public class UsuarioService {
         if (usuarioBD.isPresent()) {
 
             Usuario u = usuarioBD.get();
+
+            if (!Boolean.TRUE.equals(u.getActivo())) {
+                return null;
+            }
 
             if (u.getPassword().equals(password)) {
                 return u;

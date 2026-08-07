@@ -2,7 +2,7 @@ import { useState } from "react";
 import { login } from "../services/usuarioService";
 import { useNavigate } from "react-router-dom";
 
-function Login() {
+function Login({ onLogin }) {
 
     const [usuario, setUsuario] = useState("");
     const [password, setPassword] = useState("");
@@ -27,6 +27,8 @@ function Login() {
                 "usuario",
                 JSON.stringify(respuesta.data)
             );
+
+            onLogin(respuesta.data);
 
             navigate("/");
 

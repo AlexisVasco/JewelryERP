@@ -9,3 +9,11 @@ export const login = (credenciales) => {
 export const registrar = (usuario) => {
     return axios.post(`${API_URL}/registrar`, usuario);
 };
+
+export const listarUsuarios = () => {
+    return axios.get(API_URL);
+};
+
+export const actualizarUsuario = (id, usuario) => {
+    return axios.put(`${API_URL}/${id}`, usuario);
+};

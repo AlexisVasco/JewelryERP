@@ -24,6 +24,9 @@ public class Usuario {
 
     private String rol;
 
+    @Column(nullable = false)
+    private Boolean activo = true;
+
     public Usuario() {
     }
 
@@ -62,4 +65,13 @@ public class Usuario {
     public void setRol(String rol) {
         this.rol = rol;
     }
+
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
+    }
+
 }

@@ -1,109 +1,146 @@
 import { NavLink } from "react-router-dom";
 
-function Sidebar(){
+function Sidebar() {
+
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+
+    const esAdmin = usuario?.rol === "ADMIN";
+
     return (
+
         <aside className="sidebar">
-            <div>
-                <h2 className="sidebar-title">LuxorShop</h2>
-            </div>
+
+            <h2>LuxorShop</h2>
 
             <nav>
+
                 <ul>
+
                     <li>
-                        <NavLink 
+                        <NavLink
                             to="/"
                             className={({ isActive }) =>
                                 isActive ? "menu-link active" : "menu-link"
-                        }
+                            }
                         >
-                        🏠 Inicio
+                            🏠 Inicio
                         </NavLink>
-                        </li>
+                    </li>
 
                     <li>
-                        <NavLink 
-                        to="/productos"
-                        className={({ isActive }) =>
-                            isActive ? "menu-link active" : "menu-link"
-                    }
-                    >
-                        📦 Productos 
+                        <NavLink
+                            to="/productos"
+                            className={({ isActive }) =>
+                                isActive ? "menu-link active" : "menu-link"
+                            }
+                        >
+                            📦 Productos
                         </NavLink>
-                        </li>
+                    </li>
 
                     <li>
-                        <NavLink 
-                        to="/ventas"
-                        className={({ isActive}) =>
-                            isActive ? "menu-link active" : "menu-link"
-                    }
-                    >
-                        🛒 Ventas
+                        <NavLink
+                            to="/ventas"
+                            className={({ isActive }) =>
+                                isActive ? "menu-link active" : "menu-link"
+                            }
+                        >
+                            🛒 Ventas
                         </NavLink>
-                        </li>
+                    </li>
 
                     <li>
-                        <NavLink 
-                        to="/clientes"
-                        className={({ isActive }) =>
-                            isActive ? "menu-link active" : "menu-link"
-                    }
-                    >
-                        👥 Clientes
+                        <NavLink
+                            to="/clientes"
+                            className={({ isActive }) =>
+                                isActive ? "menu-link active" : "menu-link"
+                            }
+                        >
+                            👥 Clientes
                         </NavLink>
-                        </li>
+                    </li>
 
-                    <li>
-                        <NavLink 
-                        to="/proveedores"
-                        className={({ isActive }) =>
-                            isActive ? "menu-link active" : "menu-link"
-                    }
-                    >
-                        🚚 Proveedores
-                        </NavLink>
+                    {esAdmin && (
+                        <li>
+                            <NavLink
+                                to="/usuarios"
+                                className={({ isActive }) =>
+                                    isActive ? "menu-link active" : "menu-link"
+                                }
+                            >
+                                👤 Usuarios
+                            </NavLink>
                         </li>
+                    )}
 
-                    <li>
-                        <NavLink 
-                        to="/gastos"
-                        className={({ isActive }) =>
-                            isActive ? "menu-link active" : "menu-link"
-                    }
-                    >
-                        💰 Gastos
-                        </NavLink>
+                    {esAdmin && (
+                        <li>
+                            <NavLink
+                                to="/proveedores"
+                                className={({ isActive }) =>
+                                    isActive ? "menu-link active" : "menu-link"
+                                }
+                            >
+                                🚚 Proveedores
+                            </NavLink>
                         </li>
+                    )}
 
-                    <li>
-                        <NavLink 
-                        to="/reportes"
-                        className={({ isActive }) =>
-                            isActive ? "menu-link active" : "menu-link"
-                    }
-                    >
-                        📊 Reportes
-                        </NavLink>
+                    {esAdmin && (
+                        <li>
+                            <NavLink
+                                to="/gastos"
+                                className={({ isActive }) =>
+                                    isActive ? "menu-link active" : "menu-link"
+                                }
+                            >
+                                💰 Gastos
+                            </NavLink>
                         </li>
+                    )}
+
+                    {esAdmin && (
+                        <li>
+                            <NavLink
+                                to="/reportes"
+                                className={({ isActive }) =>
+                                    isActive ? "menu-link active" : "menu-link"
+                                }
+                            >
+                                📊 Reportes
+                            </NavLink>
+                        </li>
+                    )}
+
                 </ul>
+
             </nav>
 
-            <div>
-                <ul>
-                    <li>
-                        <NavLink 
-                        to="/configuracion"
-                        className={({ isActive }) =>
-                            isActive ? "menu-link active" : "menu-link"
-                    }
-                    >
-                        ⚙️ Configuracion
-                        </NavLink>
+            {esAdmin && (
+                <div>
+
+                    <ul>
+
+                        <li>
+                            <NavLink
+                                to="/configuracion"
+                                className={({ isActive }) =>
+                                    isActive ? "menu-link active" : "menu-link"
+                                }
+                            >
+                                ⚙️ Configuración
+                            </NavLink>
                         </li>
-                </ul>
-            </div>
+
+                    </ul>
+
+                </div>
+            )}
+
         </aside>
+
     );
+
 }
 
 export default Sidebar;
