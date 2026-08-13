@@ -32,25 +32,38 @@ public class ReporteService {
 
         ReporteDTO reporte = new ReporteDTO();
 
-        Double totalVentas = ventaRepository.findAll()
+        double totalVentas = ventaRepository.findAll()
                 .stream()
-                .mapToDouble(v -> v.getTotal())
+                .filter(venta -> venta.getTotal() != null)
+                .mapToDouble(venta -> venta.getTotal())
                 .sum();
 
-        Double totalGastos = gastoRepository.findAll()
+        double totalGastos = gastoRepository.findAll()
                 .stream()
-                .mapToDouble(g -> g.getValor())
+                .filter(gasto -> gasto.getValor() != null)
+                .mapToDouble(gasto -> gasto.getValor())
                 .sum();
+
+        double utilidad = totalVentas - totalGastos;
 
         reporte.setTotalVentas(totalVentas);
-        reporte.setTotalGastos(totalGastos);
-        reporte.setGanancia(totalVentas - totalGastos);
 
-        reporte.setTotalProductos(productoRepository.count());
-        reporte.setTotalClientes(clienteRepository.count());
-        reporte.setTotalVentasRealizadas(ventaRepository.count());
+        reporte.setTotalGastos(totalGastos);
+
+        reporte.setGanancia(utilidad);
+
+        reporte.setTotalProductos(
+                productoRepository.count()
+        );
+
+        reporte.setTotalClientes(
+                clienteRepository.count()
+        );
+
+        reporte.setTotalVentasRealizadas(
+                ventaRepository.count()
+        );
 
         return reporte;
     }
-
 }

@@ -22,424 +22,834 @@ function Ventas() {
     }, []);
 
     const cargarClientes = async () => {
+
         try {
+
             const respuesta = await listarClientes();
+
             setClientes(respuesta.data);
+
         } catch (error) {
+
             console.error(error);
+
         }
+
     };
 
     const cargarProductos = async () => {
+
         try {
+
             const respuesta = await listarProductos();
+
             setProductos(respuesta.data);
+
         } catch (error) {
+
             console.error(error);
+
         }
+
     };
 
     const cargarVentas = async () => {
-        try {
-        const respuesta = await listarVentas();
-        setVentas(respuesta.data);
 
-    } catch (error) {
+        try {
+
+            const respuesta = await listarVentas();
+
+            setVentas(respuesta.data);
+
+        } catch (error) {
+
             console.error(error);
 
-    }
+        }
 
-};
+    };
 
     const agregarProducto = () => {
 
-    if (!productoSeleccionado) return;
+        if (!productoSeleccionado) {
 
-    const producto = productos.find(
-        p => p.id === parseInt(productoSeleccionado)
-    );
+            alert("Seleccione un producto.");
 
-    if (!producto) return;
+            return;
 
-    const existe = detalleVenta.find(
-        item => item.id === producto.id
-    );
+        }
 
-    const cantidadActual = existe ? existe.cantidad : 0;
-
-    if (cantidad + cantidadActual > producto.stock) {
-
-        alert(
-            `Solo hay ${producto.stock} unidades disponibles en inventario.`
+        const producto = productos.find(
+            p => p.id === parseInt(productoSeleccionado)
         );
 
-        return;
+        if (!producto) {
 
-    }
+            return;
 
-    if (existe) {
+        }
 
-        const nuevaLista = detalleVenta.map(item => {
+        const cantidadNumerica = parseInt(cantidad);
 
-            if (item.id === producto.id) {
+        if (!cantidadNumerica || cantidadNumerica < 1) {
 
-                const nuevaCantidad = item.cantidad + cantidad;
+            alert("Ingrese una cantidad válida.");
 
-                return {
-                    ...item,
-                    cantidad: nuevaCantidad,
-                    subtotal: nuevaCantidad * item.precio
-                };
+            return;
 
-            }
+        }
 
-            return item;
+        if (producto.stock <= 0) {
 
-        });
+            alert("Este producto no tiene stock disponible.");
 
-        setDetalleVenta(nuevaLista);
+            return;
 
-    } else {
+        }
 
-        const nuevoProducto = {
-            id: producto.id,
-            nombre: producto.nombre,
-            precio: producto.precio,
-            cantidad,
-            subtotal: producto.precio * cantidad
-        };
+        const existe = detalleVenta.find(
+            item => item.id === producto.id
+        );
 
-        setDetalleVenta([
-            ...detalleVenta,
-            nuevoProducto
-        ]);
+        const cantidadActual = existe
+            ? existe.cantidad
+            : 0;
 
-    }
+        if (
+            cantidadNumerica + cantidadActual >
+            producto.stock
+        ) {
 
-    setProductoSeleccionado("");
-    setCantidad(1);
+            alert(
+                `Solo hay ${producto.stock} unidades disponibles en inventario.`
+            );
 
-};
+            return;
+
+        }
+
+        if (existe) {
+
+            const nuevaLista = detalleVenta.map(item => {
+
+                if (item.id === producto.id) {
+
+                    const nuevaCantidad =
+                        item.cantidad + cantidadNumerica;
+
+                    return {
+
+                        ...item,
+
+                        cantidad: nuevaCantidad,
+
+                        subtotal:
+                            nuevaCantidad *
+                            Number(item.precio)
+
+                    };
+
+                }
+
+                return item;
+
+            });
+
+            setDetalleVenta(nuevaLista);
+
+        } else {
+
+            const nuevoProducto = {
+
+                id: producto.id,
+
+                nombre: producto.nombre,
+
+                precio: Number(producto.precio),
+
+                stock: producto.stock,
+
+                cantidad: cantidadNumerica,
+
+                subtotal:
+                    Number(producto.precio) *
+                    cantidadNumerica
+
+            };
+
+            setDetalleVenta([
+
+                ...detalleVenta,
+
+                nuevoProducto
+
+            ]);
+
+        }
+
+        setProductoSeleccionado("");
+
+        setCantidad(1);
+
+    };
 
     const eliminarProducto = (index) => {
 
         const nuevaLista = detalleVenta.filter(
-                (_, i) => i !== index
+            (_, i) => i !== index
         );
 
-    setDetalleVenta(nuevaLista);
+        setDetalleVenta(nuevaLista);
 
-};
+    };
 
     const total = detalleVenta.reduce(
-        (suma, item) => suma + item.subtotal,
+        (suma, item) =>
+            suma + Number(item.subtotal),
         0
     );
 
     const guardarVenta = async () => {
 
-    if (!clienteSeleccionado) {
-        alert("Seleccione un cliente");
-        return;
-    }
+        if (!clienteSeleccionado) {
 
-    if (detalleVenta.length === 0) {
-        alert("Agregue al menos un producto");
-        return;
-    }
+            alert("Seleccione un cliente.");
 
-    const venta = {
-        clienteId: parseInt(clienteSeleccionado),
-        productos: detalleVenta.map(item => ({
-            productoId: item.id,
-            cantidad: item.cantidad
-        }))
+            return;
+
+        }
+
+        if (detalleVenta.length === 0) {
+
+            alert("Agregue al menos un producto.");
+
+            return;
+
+        }
+
+        const venta = {
+
+            clienteId:
+                parseInt(clienteSeleccionado),
+
+            productos:
+                detalleVenta.map(item => ({
+
+                    productoId: item.id,
+
+                    cantidad: item.cantidad
+
+                }))
+
+        };
+
+        try {
+
+            await registrarVenta(venta);
+
+            alert("Venta registrada correctamente.");
+
+            setDetalleVenta([]);
+
+            setClienteSeleccionado("");
+
+            setProductoSeleccionado("");
+
+            setCantidad(1);
+
+            await cargarVentas();
+
+            await cargarProductos();
+
+        } catch (error) {
+
+            console.error(error);
+
+            if (
+                error.response &&
+                error.response.data
+            ) {
+
+                alert(error.response.data);
+
+            } else {
+
+                alert(
+                    "Error al registrar la venta."
+                );
+
+            }
+
+        }
+
     };
 
-    try {
+    const productoActual = productos.find(
+        p => p.id === parseInt(productoSeleccionado)
+    );
 
-        await registrarVenta(venta);
+    const formatoMoneda = (valor) => {
 
-        alert("Venta registrada correctamente");
+        return new Intl.NumberFormat(
+            "es-CO",
+            {
+                style: "currency",
+                currency: "COP",
+                minimumFractionDigits: 0
+            }
+        ).format(Number(valor) || 0);
 
-        setDetalleVenta([]);
-        setClienteSeleccionado("");
-        setProductoSeleccionado("");
-        setCantidad(1);
-        cargarVentas();
-
-        cargarProductos();
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert("Error al registrar la venta");
-
-    }
-
-};
+    };
 
     return (
+
         <div>
 
-            <h1>Ventas</h1>
+            <h1
+                style={{
+                    color: "#111111",
+                    marginBottom: "20px"
+                }}
+            >
+                🛒 Ventas
+            </h1>
 
-            <div className="table-card">
+            <div
+                className="table-card"
+                style={{
+                    marginBottom: "20px"
+                }}
+            >
 
-                <h3 className="table-title">Nueva Venta</h3>
+                <h3 className="table-title">
+                    🧾 Nueva Venta
+                </h3>
+
+                <br />
 
                 <div className="form-fields">
 
-                    <select
-                        className="form-input"
-                        value={clienteSeleccionado}
-                        onChange={(e) => setClienteSeleccionado(e.target.value)}
+                    <div style={{ width: "100%" }}>
+
+                        <label
+                            style={{
+                                display: "block",
+                                marginBottom: "6px",
+                                fontWeight: "600",
+                                color: "#333"
+                            }}
+                        >
+                            Cliente
+                        </label>
+
+                        <select
+                            className="form-input"
+                            value={clienteSeleccionado}
+                            onChange={(e) =>
+                                setClienteSeleccionado(
+                                    e.target.value
+                                )
+                            }
+                        >
+
+                            <option value="">
+                                Seleccione un cliente
+                            </option>
+
+                            {clientes.map((cliente) => (
+
+                                <option
+                                    key={cliente.id}
+                                    value={cliente.id}
+                                >
+                                    {cliente.nombre}
+                                </option>
+
+                            ))}
+
+                        </select>
+
+                    </div>
+
+                    <div style={{ width: "100%" }}>
+
+                        <label
+                            style={{
+                                display: "block",
+                                marginBottom: "6px",
+                                fontWeight: "600",
+                                color: "#333"
+                            }}
+                        >
+                            Producto
+                        </label>
+
+                        <select
+                            className="form-input"
+                            value={productoSeleccionado}
+                            onChange={(e) =>
+                                setProductoSeleccionado(
+                                    e.target.value
+                                )
+                            }
+                        >
+
+                            <option value="">
+                                Seleccione un producto
+                            </option>
+
+                            {productos.map((producto) => (
+
+                                <option
+                                    key={producto.id}
+                                    value={producto.id}
+                                    disabled={producto.stock <= 0}
+                                >
+                                    {producto.nombre} —{" "}
+                                    {formatoMoneda(
+                                        producto.precio
+                                    )} — Stock:{" "}
+                                    {producto.stock}
+                                </option>
+
+                            ))}
+
+                        </select>
+
+                    </div>
+
+                    <div style={{ width: "100%" }}>
+
+                        <label
+                            style={{
+                                display: "block",
+                                marginBottom: "6px",
+                                fontWeight: "600",
+                                color: "#333"
+                            }}
+                        >
+                            Cantidad
+                        </label>
+
+                        <input
+                            className="form-input"
+                            type="number"
+                            min="1"
+                            max={
+                                productoActual
+                                    ? productoActual.stock
+                                    : undefined
+                            }
+                            value={cantidad}
+                            onChange={(e) =>
+                                setCantidad(
+                                    parseInt(
+                                        e.target.value
+                                    ) || 1
+                                )
+                            }
+                        />
+
+                    </div>
+
+                    <div
+                        style={{
+                            width: "100%",
+                            display: "flex",
+                            alignItems: "end"
+                        }}
                     >
 
-                        <option value="">
-                            Seleccione un cliente
-                        </option>
+                        <button
+                            className="form-button"
+                            onClick={agregarProducto}
+                            style={{
+                                width: "100%"
+                            }}
+                        >
+                            ➕ Agregar Producto
+                        </button>
 
-                        {clientes.map((cliente) => (
-                            <option
-                                key={cliente.id}
-                                value={cliente.id}
-                            >
-                                {cliente.nombre}
-                            </option>
-                        ))}
+                    </div>
 
-                    </select>
+                </div>
 
-                    <select
-                        className="form-input"
-                        value={productoSeleccionado}
-                        onChange={(e) => setProductoSeleccionado(e.target.value)}
+                {productoActual && (
+
+                    <div
+                        style={{
+                            marginTop: "20px",
+                            padding: "15px",
+                            borderRadius: "10px",
+                            background: "#f5f7fb",
+                            border: "1px solid #e5e7eb"
+                        }}
                     >
 
-                        <option value="">
-                            Seleccione un producto
-                        </option>
+                        <strong>
+                            📦 {productoActual.nombre}
+                        </strong>
 
-                        {productos.map((producto) => (
-                            <option
-                                key={producto.id}
-                                value={producto.id}
-                            >
-                                {producto.nombre}
-                            </option>
-                        ))}
+                        <div
+                            style={{
+                                display: "flex",
+                                gap: "30px",
+                                marginTop: "8px",
+                                flexWrap: "wrap"
+                            }}
+                        >
 
-                    </select>
+                            <span>
+                                💰 Precio:{" "}
+                                <strong>
+                                    {formatoMoneda(
+                                        productoActual.precio
+                                    )}
+                                </strong>
+                            </span>
 
-                    <input
-                        className="form-input"
-                        type="number"
-                        min="1"
-                        value={cantidad}
-                        onChange={(e) =>
-                            setCantidad(parseInt(e.target.value) || 1)
-                        }
-                    />
+                            <span>
+                                📦 Stock disponible:{" "}
+                                <strong>
+                                    {productoActual.stock}
+                                </strong>
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                )}
+
+            </div>
+
+            <div
+                className="table-card"
+                style={{
+                    marginBottom: "20px"
+                }}
+            >
+
+                <h3 className="table-title">
+                    🛍️ Productos de la venta
+                </h3>
+
+                <br />
+
+                <div
+                    style={{
+                        overflowX: "auto"
+                    }}
+                >
+
+                    <table className="products-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Producto
+                                </th>
+
+                                <th>
+                                    Cantidad
+                                </th>
+
+                                <th>
+                                    Precio
+                                </th>
+
+                                <th>
+                                    Subtotal
+                                </th>
+
+                                <th>
+                                    Acción
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {detalleVenta.length === 0 ?
+
+                                (
+
+                                    <tr>
+
+                                        <td
+                                            colSpan="5"
+                                            style={{
+                                                textAlign:
+                                                    "center",
+                                                padding:
+                                                    "30px",
+                                                color:
+                                                    "#777"
+                                            }}
+                                        >
+                                            🛒 Aún no hay productos
+                                            agregados a esta venta.
+                                        </td>
+
+                                    </tr>
+
+                                )
+
+                                :
+
+                                detalleVenta.map(
+                                    (item, index) => (
+
+                                        <tr
+                                            key={index}
+                                        >
+
+                                            <td>
+
+                                                <strong>
+                                                    {item.nombre}
+                                                </strong>
+
+                                            </td>
+
+                                            <td>
+                                                {item.cantidad}
+                                            </td>
+
+                                            <td>
+                                                {formatoMoneda(
+                                                    item.precio
+                                                )}
+                                            </td>
+
+                                            <td>
+                                                <strong>
+                                                    {formatoMoneda(
+                                                        item.subtotal
+                                                    )}
+                                                </strong>
+                                            </td>
+
+                                            <td>
+
+                                                <button
+                                                    onClick={() =>
+                                                        eliminarProducto(
+                                                            index
+                                                        )
+                                                    }
+                                                    style={{
+                                                        border:
+                                                            "none",
+                                                        background:
+                                                            "#fee2e2",
+                                                        padding:
+                                                            "8px 12px",
+                                                        borderRadius:
+                                                            "6px",
+                                                        cursor:
+                                                            "pointer"
+                                                    }}
+                                                    title="Eliminar producto"
+                                                >
+                                                    🗑️
+                                                </button>
+
+                                            </td>
+
+                                        </tr>
+
+                                    )
+                                )
+
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <div
+                    style={{
+                        marginTop: "25px",
+                        display: "flex",
+                        justifyContent:
+                            "space-between",
+                        alignItems: "center",
+                        gap: "20px",
+                        flexWrap: "wrap"
+                    }}
+                >
+
+                    <h2
+                        style={{
+                            margin: 0,
+                            color: "#111"
+                        }}
+                    >
+                        Total:{" "}
+                        <span
+                            style={{
+                                color: "#2563eb"
+                            }}
+                        >
+                            {formatoMoneda(total)}
+                        </span>
+                    </h2>
 
                     <button
                         className="form-button"
-                        onClick={agregarProducto}
+                        onClick={guardarVenta}
+                        disabled={
+                            detalleVenta.length === 0 ||
+                            !clienteSeleccionado
+                        }
+                        style={{
+                            minWidth: "180px",
+                            opacity:
+                                detalleVenta.length === 0 ||
+                                !clienteSeleccionado
+                                    ? 0.6
+                                    : 1
+                        }}
                     >
-                        Agregar Producto
+                        💾 Registrar Venta
                     </button>
 
                 </div>
 
             </div>
 
-            <br />
-
             <div className="table-card">
 
                 <h3 className="table-title">
-                    Productos de la venta
+                    📋 Historial de Ventas
                 </h3>
 
-                <table className="products-table">
+                <br />
 
-                    <thead>
+                <div
+                    style={{
+                        overflowX: "auto"
+                    }}
+                >
 
-                <tr>
-                    <th>Producto</th>
-                    <th>Cantidad</th>
-                    <th>Precio</th>
-                    <th>Subtotal</th>
-                     <th>Acción</th>
-                </tr>
+                    <table className="products-table">
 
-                    </thead>
+                        <thead>
 
-                    <tbody>
+                            <tr>
 
-                        {
-                            detalleVenta.length === 0 ?
+                                <th>
+                                    ID
+                                </th>
+
+                                <th>
+                                    Cliente
+                                </th>
+
+                                <th>
+                                    Fecha
+                                </th>
+
+                                <th>
+                                    Total
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {ventas.length === 0 ?
 
                                 (
+
                                     <tr>
+
                                         <td
                                             colSpan="4"
-                                            style={{ textAlign: "center" }}
+                                            style={{
+                                                textAlign:
+                                                    "center",
+                                                padding:
+                                                    "30px",
+                                                color:
+                                                    "#777"
+                                            }}
                                         >
-                                            Aún no hay productos agregados
+                                            📋 No hay ventas
+                                            registradas.
                                         </td>
+
                                     </tr>
+
                                 )
 
                                 :
 
-                                detalleVenta.map((item, index) => (
+                                ventas.map(
+                                    (venta) => (
 
-                                    <tr key={index}>
+                                        <tr
+                                            key={venta.id}
+                                        >
 
-                                        <td>{item.nombre}</td>
+                                            <td>
+                                                #{venta.id}
+                                            </td>
 
-                                        <td>{item.cantidad}</td>
+                                            <td>
+                                                {venta.cliente
+                                                    ? venta.cliente.nombre
+                                                    : "Cliente no disponible"}
+                                            </td>
 
-                                        <td>
-                                            {new Intl.NumberFormat(
-                                                "es-CO",
-                                                {
-                                                    style: "currency",
-                                                    currency: "COP",
-                                                    minimumFractionDigits: 0
-                                                }
-                                            ).format(item.precio)}
-                                        </td>
-                                        
+                                            <td>
 
-                                        <td>
-                                            {new Intl.NumberFormat(
-                                                "es-CO",
-                                                {
-                                                    style: "currency",
-                                                    currency: "COP",
-                                                    minimumFractionDigits: 0
-                                                }
-                                            ).format(item.subtotal)}
-                                        </td>
-                                        <td>
-
-                                        <button
-                                            onClick={() => eliminarProducto(index)}
-                                            >
-                                            🗑️
-                                        </button>
+                                                {new Date(
+                                                    venta.fecha
+                                                ).toLocaleString(
+                                                    "es-CO"
+                                                )}
 
                                             </td>
 
-                                    </tr>
+                                            <td>
 
-                                ))
+                                                <strong>
+                                                    {formatoMoneda(
+                                                        venta.total
+                                                    )}
+                                                </strong>
 
-                        }
+                                            </td>
 
-                    </tbody>
+                                        </tr>
 
-                </table>
+                                    )
+                                )
 
-                <br />
-
-                <h2>
-
-                    Total: {
-
-                        new Intl.NumberFormat(
-                            "es-CO",
-                            {
-                                style: "currency",
-                                currency: "COP",
-                                minimumFractionDigits: 0
                             }
-                        ).format(total)
 
-                    }
+                        </tbody>
 
-                </h2>
+                    </table>
 
-                <button
-                    className="form-button"
-                    onClick={guardarVenta}
-                >
-                    Registrar Venta
-                    
-                </button>
+                </div>
 
             </div>
 
-            <div className="table-card">
-
-    <h3 className="table-title">
-        Historial de Ventas
-    </h3>
-
-    <table className="products-table">
-
-        <thead>
-
-            <tr>
-                <th>ID</th>
-                <th>Cliente</th>
-                <th>Fecha</th>
-                <th>Total</th>
-            </tr>
-
-        </thead>
-
-        <tbody>
-
-            {
-                ventas.length === 0 ?
-
-                (
-                    <tr>
-                        <td colSpan="4" style={{ textAlign: "center" }}>
-                            No hay ventas registradas
-                        </td>
-                    </tr>
-                )
-
-                :
-
-                ventas.map((venta) => (
-
-                    <tr key={venta.id}>
-
-                        <td>{venta.id}</td>
-
-                        <td>{venta.cliente.nombre}</td>
-
-                        <td>
-                            {new Date(venta.fecha).toLocaleString("es-CO")}
-                        </td>
-
-                        <td>
-                            {new Intl.NumberFormat("es-CO", {
-                                style: "currency",
-                                currency: "COP",
-                                minimumFractionDigits: 0
-                            }).format(venta.total)}
-                        </td>
-
-                    </tr>
-
-                ))
-            }
-
-        </tbody>
-
-    </table>
-
-</div>
-
         </div>
+
     );
+
 }
 
 export default Ventas;

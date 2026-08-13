@@ -44,29 +44,212 @@ function VentasChart() {
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                "Error cargando ventas:",
+                error
+            );
 
         }
 
     };
 
+
+    /*
+     * Nombres de los meses.
+     */
+    const meses = [
+        "Enero",
+        "Febrero",
+        "Marzo",
+        "Abril",
+        "Mayo",
+        "Junio",
+        "Julio",
+        "Agosto",
+        "Septiembre",
+        "Octubre",
+        "Noviembre",
+        "Diciembre"
+    ];
+
+
+    /*
+     * Obtenemos los últimos 6 meses.
+     */
+    const obtenerUltimosSeisMeses = () => {
+
+        const resultado = [];
+
+        const fechaActual = new Date();
+
+        for (let i = 5; i >= 0; i--) {
+
+            const fecha = new Date(
+                fechaActual.getFullYear(),
+                fechaActual.getMonth() - i,
+                1
+            );
+
+            resultado.push({
+
+                numero: fecha.getMonth(),
+
+                anio: fecha.getFullYear(),
+
+                nombre: meses[fecha.getMonth()]
+
+            });
+
+        }
+
+        return resultado;
+
+    };
+
+
+    const ultimosSeisMeses =
+        obtenerUltimosSeisMeses();
+
+
+    /*
+     * Convierte el nombre del mes que viene
+     * desde el backend a número.
+     */
+    const obtenerNumeroMes = (mes) => {
+
+        if (!mes) {
+            return -1;
+        }
+
+        const nombre = mes
+            .toString()
+            .toLowerCase()
+            .trim();
+
+        const mesesNumeros = {
+
+            enero: 0,
+            january: 0,
+
+            febrero: 1,
+            february: 1,
+
+            marzo: 2,
+            march: 2,
+
+            abril: 3,
+            april: 3,
+
+            mayo: 4,
+            may: 4,
+
+            junio: 5,
+            june: 5,
+
+            julio: 6,
+            july: 6,
+
+            agosto: 7,
+            august: 7,
+
+            septiembre: 8,
+            september: 8,
+
+            octubre: 9,
+            october: 9,
+
+            noviembre: 10,
+            november: 10,
+
+            diciembre: 11,
+            december: 11
+
+        };
+
+        return mesesNumeros[nombre] ?? -1;
+
+    };
+
+
+    /*
+     * Construimos los valores de la gráfica.
+     *
+     * Ahora comparamos:
+     *
+     * mes + año
+     *
+     * para evitar mezclar años diferentes.
+     */
+    const valoresVentas =
+        ultimosSeisMeses.map((mes) => {
+
+            const ventaEncontrada =
+                ventas.find((venta) => {
+
+                    const numeroMes =
+                        obtenerNumeroMes(
+                            venta.mes
+                        );
+
+                    const anio =
+                        Number(venta.anio);
+
+                    return (
+                        numeroMes === mes.numero &&
+                        anio === mes.anio
+                    );
+
+                });
+
+            return ventaEncontrada
+                ? Number(ventaEncontrada.total)
+                : 0;
+
+        });
+
+
+    /*
+     * Nombres que aparecerán debajo
+     * de cada punto de la gráfica.
+     */
+    const nombresMeses =
+        ultimosSeisMeses.map((mes) => {
+
+            return `${mes.nombre} ${mes.anio}`;
+
+        });
+
+
     const data = {
 
-        labels: ventas.map(v => v.mes),
+        labels: nombresMeses,
 
         datasets: [
 
             {
 
-                label: "Ventas por mes",
+                label: "Ventas",
 
-                data: ventas.map(v => v.total),
+                data: valoresVentas,
 
                 borderColor: "#2563eb",
 
-                backgroundColor: "#60a5fa",
+                backgroundColor:
+                    "rgba(37, 99, 235, 0.15)",
 
                 borderWidth: 3,
+
+                pointRadius: 5,
+
+                pointHoverRadius: 7,
+
+                pointBackgroundColor:
+                    "#2563eb",
+
+                pointBorderColor:
+                    "#ffffff",
+
+                pointBorderWidth: 2,
 
                 tension: 0.4,
 
@@ -78,9 +261,12 @@ function VentasChart() {
 
     };
 
+
     const options = {
 
         responsive: true,
+
+        maintainAspectRatio: true,
 
         plugins: {
 
@@ -88,13 +274,68 @@ function VentasChart() {
 
                 position: "top"
 
+            },
+
+            tooltip: {
+
+                callbacks: {
+
+                    label: function (context) {
+
+                        return new Intl.NumberFormat(
+                            "es-CO",
+                            {
+                                style: "currency",
+                                currency: "COP",
+                                minimumFractionDigits: 0
+                            }
+                        ).format(context.raw);
+
+                    }
+
+                }
+
+            }
+
+        },
+
+        scales: {
+
+            y: {
+
+                beginAtZero: true,
+
+                ticks: {
+
+                    callback: function (value) {
+
+                        return new Intl.NumberFormat(
+                            "es-CO",
+                            {
+                                notation: "compact",
+                                compactDisplay: "short"
+                            }
+                        ).format(value);
+
+                    }
+
+                }
+
             }
 
         }
 
     };
 
-    return <Line data={data} options={options} />;
+
+    return (
+
+        <Line
+            data={data}
+            options={options}
+        />
+
+    );
 
 }
 

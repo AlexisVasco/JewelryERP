@@ -17,3 +17,7 @@ export const actualizarProducto = (id, producto) => {
 export const eliminarProducto = (id) => {
     return axios.delete(`${API_URL}/${id}`);
 };
+
+export const obtenerProductoPorId = (id) => {
+    return axios.get(`${API_URL}/${id}`);
+};

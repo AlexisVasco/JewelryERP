@@ -20,47 +20,61 @@ public class Producto {
     private Integer costo;
     private Integer precio;
 
-    public Long getId(){
+    private String imagen;
+
+    public Long getId() {
         return id;
     }
-    public void setId(Long id){
+
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getNombre(){
+    public String getNombre() {
         return nombre;
     }
-    public void setNombre(String nombre){
+
+    public void setNombre(String nombre) {
         this.nombre = nombre;
     }
 
-    public String getMedida(){
+    public String getMedida() {
         return medida;
     }
-    public void setMedida(String medida){
+
+    public void setMedida(String medida) {
         this.medida = medida;
     }
 
-    public Integer getStock(){
+    public Integer getStock() {
         return stock;
     }
-    public void setStock(Integer stock){
+
+    public void setStock(Integer stock) {
         this.stock = stock;
     }
 
-    public Integer getCosto(){
+    public Integer getCosto() {
         return costo;
     }
-    public void setCosto(Integer costo){
+
+    public void setCosto(Integer costo) {
         this.costo = costo;
     }
 
-    public Integer getPrecio(){
+    public Integer getPrecio() {
         return precio;
     }
-    public void setPrecio(Integer precio){
+
+    public void setPrecio(Integer precio) {
         this.precio = precio;
     }
 
-}
+    public String getImagen() {
+        return imagen;
+    }
 
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
+    }
+}

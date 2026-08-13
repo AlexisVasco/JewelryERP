@@ -18,10 +18,42 @@ function TablaClientes({
 
             await eliminarCliente(id);
 
+            alert("Cliente eliminado correctamente.");
+
             clienteGuardado();
 
         } catch (error) {
-            console.error(error);
+
+            console.error("Error al eliminar cliente:", error);
+
+            if (error.response) {
+
+                const datos = error.response.data;
+
+                if (datos.message) {
+
+                    alert(datos.message);
+
+                } else if (datos.detail) {
+
+                    alert(datos.detail);
+
+                } else {
+
+                    alert(
+                        "No se puede eliminar este cliente porque tiene ventas registradas."
+                    );
+
+                }
+
+            } else {
+
+                alert(
+                    "No se pudo conectar con el servidor."
+                );
+
+            }
+
         }
     };
 
@@ -93,7 +125,6 @@ function TablaClientes({
         </div>
 
     );
-
 }
 
 export default TablaClientes;
