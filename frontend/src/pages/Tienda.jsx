@@ -3,7 +3,6 @@ import axios from "axios";
 import { listarProductos } from "../services/productoService";
 
 function Tienda() {
-
     const [productos, setProductos] = useState([]);
     const [productoSeleccionado, setProductoSeleccionado] = useState(null);
     const [mostrarCompra, setMostrarCompra] = useState(false);
@@ -48,42 +47,80 @@ function Tienda() {
         return `http://localhost:8080${imagen}`;
     };
 
-    const productoDestacado = productos.length > 0
-        ? productos[0]
-        : null;
+    const productoDestacado =
+        productos.length > 0 ? productos[0] : null;
 
     const totalCompra = productoSeleccionado
         ? Number(productoSeleccionado.precio || 0) * cantidad
         : 0;
 
+    const seleccionarProducto = (producto) => {
+        setProductoSeleccionado(producto);
+        setCantidad(1);
+        setMostrarCompra(false);
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    };
+
+    const volverCatalogo = () => {
+        setProductoSeleccionado(null);
+        setMostrarCompra(false);
+        setCantidad(1);
+
+        setTimeout(() => {
+            const coleccion =
+                document.getElementById("coleccion");
+
+            if (coleccion) {
+                coleccion.scrollIntoView({
+                    behavior: "smooth"
+                });
+            }
+        }, 50);
+    };
+
     /*
-     * ================================
-     * COMPRA
-     * ================================
+     * ==========================================
+     * CHECKOUT
+     * ==========================================
      */
 
     if (productoSeleccionado && mostrarCompra) {
-
         return (
             <div style={styles.page}>
-
                 <style>{responsiveStyles}</style>
 
-                <header style={styles.header}>
-                    <div style={styles.logo}>LUXORSHOP</div>
+                <header
+                    style={styles.header}
+                    className="luxor-header"
+                >
+                    <button
+                        onClick={() => setMostrarCompra(false)}
+                        style={styles.mobileBackButton}
+                    >
+                        ←
+                    </button>
+
+                    <div style={styles.logo}>
+                        LUXORSHOP
+                    </div>
 
                     <button
                         onClick={() => setMostrarCompra(false)}
                         style={styles.headerButton}
                     >
-                        ← Volver al producto
+                        ← VOLVER
                     </button>
                 </header>
 
                 <main style={styles.checkoutMain}>
-
-                    <div style={styles.checkoutCard}>
-
+                    <div
+                        style={styles.checkoutCard}
+                        className="luxor-checkout-card"
+                    >
                         <div style={styles.checkoutTitle}>
                             <span style={styles.eyebrow}>
                                 LUXORSHOP
@@ -99,10 +136,11 @@ function Tienda() {
                             </p>
                         </div>
 
-                        <div style={styles.checkoutGrid}>
-
+                        <div
+                            style={styles.checkoutGrid}
+                            className="luxor-checkout-grid"
+                        >
                             <div>
-
                                 <label style={styles.label}>
                                     Nombre completo
                                 </label>
@@ -111,16 +149,16 @@ function Tienda() {
                                     type="text"
                                     value={nombreCliente}
                                     onChange={(e) =>
-                                        setNombreCliente(e.target.value)
+                                        setNombreCliente(
+                                            e.target.value
+                                        )
                                     }
                                     placeholder="Tu nombre completo"
                                     style={styles.input}
                                 />
-
                             </div>
 
                             <div>
-
                                 <label style={styles.label}>
                                     Teléfono
                                 </label>
@@ -129,16 +167,16 @@ function Tienda() {
                                     type="tel"
                                     value={telefono}
                                     onChange={(e) =>
-                                        setTelefono(e.target.value)
+                                        setTelefono(
+                                            e.target.value
+                                        )
                                     }
                                     placeholder="300 000 0000"
                                     style={styles.input}
                                 />
-
                             </div>
 
                             <div>
-
                                 <label style={styles.label}>
                                     Ciudad
                                 </label>
@@ -147,16 +185,16 @@ function Tienda() {
                                     type="text"
                                     value={ciudad}
                                     onChange={(e) =>
-                                        setCiudad(e.target.value)
+                                        setCiudad(
+                                            e.target.value
+                                        )
                                     }
                                     placeholder="Medellín"
                                     style={styles.input}
                                 />
-
                             </div>
 
                             <div>
-
                                 <label style={styles.label}>
                                     Dirección
                                 </label>
@@ -165,20 +203,24 @@ function Tienda() {
                                     type="text"
                                     value={direccion}
                                     onChange={(e) =>
-                                        setDireccion(e.target.value)
+                                        setDireccion(
+                                            e.target.value
+                                        )
                                     }
                                     placeholder="Dirección de entrega"
                                     style={styles.input}
                                 />
-
                             </div>
-
                         </div>
 
-                        <div style={styles.orderSummary}>
-
-                            <div style={styles.orderImage}>
-
+                        <div
+                            style={styles.orderSummary}
+                            className="luxor-order-summary"
+                        >
+                            <div
+                                style={styles.orderImage}
+                                className="luxor-order-image"
+                            >
                                 {obtenerUrlImagen(
                                     productoSeleccionado.imagen
                                 ) ? (
@@ -186,49 +228,68 @@ function Tienda() {
                                         src={obtenerUrlImagen(
                                             productoSeleccionado.imagen
                                         )}
-                                        alt={productoSeleccionado.nombre}
+                                        alt={
+                                            productoSeleccionado.nombre
+                                        }
                                         style={styles.fullImage}
                                     />
                                 ) : (
-                                    <span style={styles.placeholderIcon}>
+                                    <span
+                                        style={
+                                            styles.placeholderIcon
+                                        }
+                                    >
                                         💎
                                     </span>
                                 )}
-
                             </div>
 
                             <div style={{ flex: 1 }}>
-
-                                <span style={styles.smallBrand}>
+                                <span
+                                    style={styles.smallBrand}
+                                >
                                     LUXORSHOP
                                 </span>
 
                                 <h2 style={styles.orderName}>
-                                    {productoSeleccionado.nombre}
+                                    {
+                                        productoSeleccionado.nombre
+                                    }
                                 </h2>
 
                                 <p style={styles.muted}>
-                                    {productoSeleccionado.medida}
+                                    {
+                                        productoSeleccionado.medida
+                                    }
                                 </p>
 
-                                <div style={styles.quantityRow}>
-
+                                <div
+                                    style={
+                                        styles.quantityRow
+                                    }
+                                >
                                     <span style={styles.label}>
                                         Cantidad
                                     </span>
 
-                                    <div style={styles.quantityBox}>
-
+                                    <div
+                                        style={
+                                            styles.quantityBox
+                                        }
+                                    >
                                         <button
                                             onClick={() =>
                                                 setCantidad(
                                                     Math.max(
                                                         1,
-                                                        cantidad - 1
+                                                        cantidad -
+                                                            1
                                                     )
                                                 )
                                             }
-                                            style={styles.quantityButton}
+                                            style={
+                                                styles.quantityButton
+                                            }
                                         >
                                             −
                                         </button>
@@ -242,7 +303,8 @@ function Tienda() {
                                                 setCantidad(
                                                     Math.min(
                                                         productoSeleccionado.stock,
-                                                        cantidad + 1
+                                                        cantidad +
+                                                            1
                                                     )
                                                 )
                                             }
@@ -261,54 +323,64 @@ function Tienda() {
                                         >
                                             +
                                         </button>
-
                                     </div>
-
                                 </div>
-
                             </div>
 
                             <strong style={styles.orderPrice}>
                                 {formatoMoneda(totalCompra)}
                             </strong>
-
                         </div>
 
                         <div style={styles.totalRow}>
-
-                            <span>Total</span>
+                            <span>Total del pedido</span>
 
                             <strong>
                                 {formatoMoneda(totalCompra)}
                             </strong>
-
                         </div>
 
                         <button
                             onClick={async () => {
-
                                 if (!nombreCliente.trim()) {
-                                    alert("Por favor ingresa tu nombre.");
+                                    alert(
+                                        "Por favor ingresa tu nombre."
+                                    );
                                     return;
                                 }
 
                                 if (!telefono.trim()) {
-                                    alert("Por favor ingresa tu teléfono.");
+                                    alert(
+                                        "Por favor ingresa tu teléfono."
+                                    );
                                     return;
                                 }
 
                                 if (!ciudad.trim()) {
-                                    alert("Por favor ingresa tu ciudad.");
+                                    alert(
+                                        "Por favor ingresa tu ciudad."
+                                    );
                                     return;
                                 }
 
                                 if (!direccion.trim()) {
-                                    alert("Por favor ingresa tu dirección.");
+                                    alert(
+                                        "Por favor ingresa tu dirección."
+                                    );
+                                    return;
+                                }
+
+                                if (
+                                    cantidad >
+                                    productoSeleccionado.stock
+                                ) {
+                                    alert(
+                                        "La cantidad seleccionada supera el stock disponible."
+                                    );
                                     return;
                                 }
 
                                 try {
-
                                     const clienteRespuesta =
                                         await axios.post(
                                             "http://localhost:8080/clientes",
@@ -318,8 +390,7 @@ function Tienda() {
                                                 telefono:
                                                     telefono.trim(),
                                                 correo: "",
-                                                direccion:
-                                                    `${ciudad.trim()} - ${direccion.trim()}`
+                                                direccion: `${ciudad.trim()} - ${direccion.trim()}`
                                             }
                                         );
 
@@ -345,9 +416,13 @@ function Tienda() {
                                     );
 
                                     setProductos(
-                                        (productosActuales) =>
+                                        (
+                                            productosActuales
+                                        ) =>
                                             productosActuales.map(
-                                                (producto) =>
+                                                (
+                                                    producto
+                                                ) =>
                                                     producto.id ===
                                                     productoSeleccionado.id
                                                         ? {
@@ -360,7 +435,9 @@ function Tienda() {
                                             )
                                     );
 
-                                    setProductoSeleccionado(null);
+                                    setProductoSeleccionado(
+                                        null
+                                    );
                                     setMostrarCompra(false);
                                     setNombreCliente("");
                                     setTelefono("");
@@ -368,119 +445,131 @@ function Tienda() {
                                     setDireccion("");
                                     setCantidad(1);
 
+                                    window.scrollTo({
+                                        top: 0,
+                                        behavior:
+                                            "smooth"
+                                    });
                                 } catch (error) {
-
                                     console.error(
                                         "Error registrando pedido:",
                                         error
                                     );
 
                                     const mensaje =
-                                        error.response?.data?.message ||
+                                        error.response
+                                            ?.data
+                                            ?.message ||
                                         "No fue posible registrar el pedido. Intenta nuevamente.";
 
                                     alert(mensaje);
                                 }
-
                             }}
                             style={styles.primaryButton}
                         >
                             CONFIRMAR PEDIDO
                         </button>
-
                     </div>
-
                 </main>
 
                 <Footer />
-
             </div>
         );
     }
 
     /*
-     * ================================
-     * PRODUCTO
-     * ================================
+     * ==========================================
+     * DETALLE DEL PRODUCTO
+     * ==========================================
      */
 
     if (productoSeleccionado) {
-
         const imagenProducto =
-            obtenerUrlImagen(productoSeleccionado.imagen);
+            obtenerUrlImagen(
+                productoSeleccionado.imagen
+            );
 
         return (
             <div style={styles.page}>
-
                 <style>{responsiveStyles}</style>
 
-                <header style={styles.header}>
-
+                <header
+                    style={styles.header}
+                    className="luxor-header"
+                >
                     <div style={styles.logo}>
                         LUXORSHOP
                     </div>
 
                     <nav style={styles.nav}>
                         <button
-                            onClick={() =>
-                                setProductoSeleccionado(null)
-                            }
+                            onClick={volverCatalogo}
                             style={styles.headerButton}
                         >
                             CATÁLOGO
                         </button>
                     </nav>
-
                 </header>
 
-                <main style={styles.productMain}>
-
+                <main
+                    style={styles.productMain}
+                    className="luxor-product-main"
+                >
                     <button
-                        onClick={() =>
-                            setProductoSeleccionado(null)
-                        }
+                        onClick={volverCatalogo}
                         style={styles.backButton}
                     >
                         ← Volver al catálogo
                     </button>
 
-                    <div style={styles.productDetail}>
-
-                        <div style={styles.productDetailImage}>
-
+                    <div
+                        style={styles.productDetail}
+                        className="luxor-product-detail"
+                    >
+                        <div
+                            style={styles.productDetailImage}
+                            className="luxor-product-image"
+                        >
                             {imagenProducto ? (
-
                                 <img
                                     src={imagenProducto}
-                                    alt={productoSeleccionado.nombre}
+                                    alt={
+                                        productoSeleccionado.nombre
+                                    }
                                     style={styles.fullImage}
                                 />
-
                             ) : (
-
-                                <div style={styles.noImageLarge}>
+                                <div
+                                    style={
+                                        styles.noImageLarge
+                                    }
+                                >
                                     💎
                                 </div>
-
                             )}
-
                         </div>
 
                         <div style={styles.productInformation}>
-
                             <span style={styles.eyebrow}>
                                 LUXORSHOP JEWELRY
                             </span>
 
-                            <h1 style={styles.productTitle}>
-                                {productoSeleccionado.nombre}
+                            <h1
+                                style={styles.productTitle}
+                                className="luxor-product-title"
+                            >
+                                {
+                                    productoSeleccionado.nombre
+                                }
                             </h1>
 
                             <p style={styles.productMeasure}>
                                 Medida:
                                 <strong>
                                     {" "}
-                                    {productoSeleccionado.medida}
+                                    {
+                                        productoSeleccionado.medida
+                                    }
                                 </strong>
                             </p>
 
@@ -490,21 +579,31 @@ function Tienda() {
                                 )}
                             </div>
 
-                            <div style={styles.separator} />
+                            <div
+                                style={styles.separator}
+                            />
 
-                            <h3 style={styles.descriptionTitle}>
+                            <h3
+                                style={
+                                    styles.descriptionTitle
+                                }
+                            >
                                 DESCRIPCIÓN
                             </h3>
 
-                            <p style={styles.description}>
-                                Descubre esta hermosa pieza de
-                                nuestra colección LuxorShop,
-                                seleccionada para acompañar
-                                momentos únicos y especiales.
+                            <p
+                                style={styles.description}
+                            >
+                                Descubre esta hermosa pieza
+                                de nuestra colección
+                                LuxorShop, seleccionada
+                                para acompañar momentos
+                                únicos y especiales.
                             </p>
 
-                            <div style={styles.stockLine}>
-
+                            <div
+                                style={styles.stockLine}
+                            >
                                 <span>
                                     Disponibilidad
                                 </span>
@@ -512,46 +611,61 @@ function Tienda() {
                                 <strong
                                     style={{
                                         color:
-                                            productoSeleccionado.stock > 0
+                                            productoSeleccionado.stock >
+                                            0
                                                 ? "#26734d"
                                                 : "#b42318"
                                     }}
                                 >
-                                    {productoSeleccionado.stock > 0
+                                    {productoSeleccionado.stock >
+                                    0
                                         ? `Disponible · ${productoSeleccionado.stock} unidad(es)`
                                         : "Agotado"}
                                 </strong>
-
                             </div>
 
-                            {productoSeleccionado.stock > 0 && (
-
-                                <div style={styles.buyBox}>
-
+                            {productoSeleccionado.stock >
+                                0 && (
+                                <div
+                                    style={
+                                        styles.buyBox
+                                    }
+                                >
                                     <div>
-
-                                        <span style={styles.label}>
+                                        <span
+                                            style={
+                                                styles.label
+                                            }
+                                        >
                                             CANTIDAD
                                         </span>
 
-                                        <div style={styles.quantityBox}>
-
+                                        <div
+                                            style={
+                                                styles.quantityBox
+                                            }
+                                        >
                                             <button
                                                 onClick={() =>
                                                     setCantidad(
                                                         Math.max(
                                                             1,
-                                                            cantidad - 1
+                                                            cantidad -
+                                                                1
                                                         )
                                                     )
                                                 }
-                                                style={styles.quantityButton}
+                                                style={
+                                                    styles.quantityButton
+                                                }
                                             >
                                                 −
                                             </button>
 
                                             <strong>
-                                                {cantidad}
+                                                {
+                                                    cantidad
+                                                }
                                             </strong>
 
                                             <button
@@ -559,7 +673,8 @@ function Tienda() {
                                                     setCantidad(
                                                         Math.min(
                                                             productoSeleccionado.stock,
-                                                            cantidad + 1
+                                                            cantidad +
+                                                                1
                                                         )
                                                     )
                                                 }
@@ -578,78 +693,111 @@ function Tienda() {
                                             >
                                                 +
                                             </button>
-
                                         </div>
-
                                     </div>
 
                                     <button
-                                        onClick={() =>
-                                            setMostrarCompra(true)
+                                        onClick={() => {
+                                            setMostrarCompra(
+                                                true
+                                            );
+
+                                            window.scrollTo(
+                                                {
+                                                    top: 0,
+                                                    behavior:
+                                                        "smooth"
+                                                }
+                                            );
+                                        }}
+                                        style={
+                                            styles.primaryButton
                                         }
-                                        style={styles.primaryButton}
                                     >
                                         COMPRAR AHORA
                                     </button>
-
                                 </div>
-
                             )}
 
-                            <div style={styles.advisorBox}>
-
-                                <span style={{ fontSize: "22px" }}>
+                            <div
+                                style={
+                                    styles.advisorBox
+                                }
+                            >
+                                <span
+                                    style={{
+                                        fontSize: "22px"
+                                    }}
+                                >
                                     💬
                                 </span>
 
                                 <div>
-
                                     <strong>
-                                        ¿Tienes alguna pregunta?
+                                        ¿Tienes alguna
+                                        pregunta?
                                     </strong>
 
-                                    <p style={styles.muted}>
-                                        Habla con un asesor de LuxorShop.
+                                    <p
+                                        style={
+                                            styles.muted
+                                        }
+                                    >
+                                        Habla con un
+                                        asesor de
+                                        LuxorShop.
                                     </p>
-
                                 </div>
 
                                 <a
                                     href="https://wa.me/573044190015"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    style={styles.whatsappLink}
+                                    style={
+                                        styles.whatsappLink
+                                    }
                                 >
                                     WhatsApp
                                 </a>
-
                             </div>
-
                         </div>
-
                     </div>
-
                 </main>
 
-                <section style={styles.legacySection}>
-
-                    <div>
-
+                <section
+                    style={styles.legacySection}
+                    className="luxor-legacy"
+                >
+                    <div
+                        style={
+                            styles.legacyContent
+                        }
+                    >
                         <span style={styles.eyebrow}>
                             NUESTRO LEGADO
                         </span>
 
-                        <h2 style={styles.legacyTitle}>
-                            Joyas que nunca pasan de moda.
+                        <h2
+                            style={
+                                styles.legacyTitle
+                            }
+                        >
+                            Joyas que nunca pasan
+                            de moda.
                         </h2>
 
-                        <p style={styles.legacyText}>
-                            En LuxorShop creemos que una joya es
-                            mucho más que un accesorio. Es una pieza
-                            que acompaña momentos, historias y
-                            recuerdos que permanecen.
+                        <p
+                            style={
+                                styles.legacyText
+                            }
+                        >
+                            En LuxorShop creemos que
+                            una joya es mucho más que
+                            un accesorio. Es una pieza
+                            que acompaña momentos,
+                            historias y recuerdos que
+                            permanecen.
                         </p>
-
                     </div>
 
                     <div
@@ -658,7 +806,6 @@ function Tienda() {
                             overflow: "hidden"
                         }}
                     >
-
                         {imagenProducto ? (
                             <img
                                 src={imagenProducto}
@@ -666,40 +813,41 @@ function Tienda() {
                                 style={styles.fullImage}
                             />
                         ) : (
-                            <div style={styles.noImageLarge}>
+                            <div
+                                style={
+                                    styles.noImageLarge
+                                }
+                            >
                                 💎
                             </div>
                         )}
-
                     </div>
-
                 </section>
 
                 <Footer />
-
             </div>
         );
     }
 
     /*
-     * ================================
-     * CATÁLOGO / INICIO
-     * ================================
+     * ==========================================
+     * CATÁLOGO
+     * ==========================================
      */
 
     return (
         <div style={styles.page}>
-
             <style>{responsiveStyles}</style>
 
-            <header style={styles.header}>
-
+            <header
+                style={styles.header}
+                className="luxor-header"
+            >
                 <div style={styles.logo}>
                     LUXORSHOP
                 </div>
 
                 <nav style={styles.nav}>
-
                     <a
                         href="/tienda"
                         style={styles.navLink}
@@ -727,30 +875,33 @@ function Tienda() {
                     >
                         CONTACTO
                     </a>
-
                 </nav>
-
             </header>
-
 
             {/* HERO */}
 
             <section
                 style={{
                     ...styles.hero,
-                    backgroundImage: "url('/hero.jpg')",
+                    backgroundImage:
+                        "url('/hero.jpg')"
                 }}
+                className="luxor-hero"
             >
-
                 <div style={styles.heroOverlay} />
 
-                <div style={styles.heroContent}>
-
+                <div
+                    style={styles.heroContent}
+                    className="luxor-hero-content"
+                >
                     <span style={styles.heroEyebrow}>
                         LUXORSHOP · JOYERÍA
                     </span>
 
-                    <h1 style={styles.heroTitle}>
+                    <h1
+                        style={styles.heroTitle}
+                        className="luxor-hero-title"
+                    >
                         Una joya.
                         <br />
                         Una historia.
@@ -759,9 +910,9 @@ function Tienda() {
                     </h1>
 
                     <p style={styles.heroText}>
-                        Piezas seleccionadas para acompañar
-                        los momentos que quieres recordar
-                        para siempre.
+                        Piezas seleccionadas para
+                        acompañar los momentos que
+                        quieres recordar para siempre.
                     </p>
 
                     <a
@@ -770,16 +921,15 @@ function Tienda() {
                     >
                         DESCUBRIR COLECCIÓN
                     </a>
-
                 </div>
-
             </section>
-
 
             {/* BENEFICIOS */}
 
-            <section style={styles.benefits}>
-
+            <section
+                style={styles.benefits}
+                className="luxor-benefits"
+            >
                 <Benefit
                     icon="✦"
                     title="ATENCIÓN PERSONALIZADA"
@@ -803,137 +953,190 @@ function Tienda() {
                     title="COMPRA SEGURA"
                     text="Tu pedido está en buenas manos."
                 />
-
             </section>
-
 
             {/* PRESENTACIÓN */}
 
             <section style={styles.introduction}>
-
                 <span style={styles.eyebrow}>
                     NUESTRA COLECCIÓN
                 </span>
 
-                <h2 style={styles.sectionTitle}>
+                <h2
+                    style={styles.sectionTitle}
+                    className="luxor-section-title"
+                >
                     Encuentra esa pieza especial
                 </h2>
 
                 <p style={styles.sectionText}>
-                    Una selección cuidadosamente elegida para
-                    quienes buscan elegancia, calidad y piezas
-                    que puedan convertirse en parte de su historia.
+                    Una selección cuidadosamente
+                    elegida para quienes buscan
+                    elegancia, calidad y piezas que
+                    puedan convertirse en parte de su
+                    historia.
                 </p>
-
             </section>
-
 
             {/* COLECCIÓN */}
 
             <section
                 id="coleccion"
                 style={styles.collection}
+                className="luxor-collection"
             >
-
-                <div style={styles.collectionHeader}>
-
+                <div
+                    style={styles.collectionHeader}
+                    className="luxor-collection-header"
+                >
                     <div>
-
                         <span style={styles.eyebrow}>
                             LUXORSHOP
                         </span>
 
-                        <h2 style={styles.collectionTitle}>
+                        <h2
+                            style={
+                                styles.collectionTitle
+                            }
+                        >
                             Nuestra selección
                         </h2>
-
                     </div>
 
-                    <span style={styles.productCount}>
+                    <span
+                        style={styles.productCount}
+                    >
                         {productos.length} pieza
-                        {productos.length !== 1 ? "s" : ""}
+                        {productos.length !== 1
+                            ? "s"
+                            : ""}
                     </span>
-
                 </div>
 
-
                 {productos.length === 0 ? (
-
                     <div style={styles.empty}>
                         No hay productos disponibles.
                     </div>
-
                 ) : (
-
                     <div
                         style={{
                             ...styles.productGrid,
                             gridTemplateColumns:
                                 productos.length === 1
-                                    ? "minmax(280px, 520px)"
+                                    ? "minmax(280px,520px)"
                                     : "repeat(2,minmax(280px,520px))"
                         }}
+                        className="luxor-product-grid"
                     >
-
                         {productos.map((producto) => {
-
                             const imagen =
-                                obtenerUrlImagen(producto.imagen);
+                                obtenerUrlImagen(
+                                    producto.imagen
+                                );
 
                             return (
-
                                 <article
                                     key={producto.id}
                                     style={styles.card}
                                     className="luxor-card"
                                 >
-
-                                    <div style={styles.cardImage}>
-
+                                    <div
+                                        style={
+                                            styles.cardImage
+                                        }
+                                        className="luxor-card-image"
+                                    >
                                         {imagen ? (
-
                                             <img
-                                                src={imagen}
-                                                alt={producto.nombre}
-                                                style={styles.fullImage}
+                                                src={
+                                                    imagen
+                                                }
+                                                alt={
+                                                    producto.nombre
+                                                }
+                                                style={
+                                                    styles.fullImage
+                                                }
                                             />
-
                                         ) : (
-
-                                            <div style={styles.noImage}>
+                                            <div
+                                                style={
+                                                    styles.noImage
+                                                }
+                                            >
                                                 💎
                                             </div>
-
                                         )}
 
-                                        {producto.stock <= 3 &&
-                                            producto.stock > 0 && (
-
-                                                <span style={styles.lastUnit}>
-                                                    ÚLTIMAS UNIDADES
+                                        {producto.stock <=
+                                            3 &&
+                                            producto.stock >
+                                                0 && (
+                                                <span
+                                                    style={
+                                                        styles.lastUnit
+                                                    }
+                                                >
+                                                    ÚLTIMAS
+                                                    UNIDADES
                                                 </span>
-
                                             )}
 
+                                        {producto.stock ===
+                                            0 && (
+                                            <span
+                                                style={
+                                                    styles.soldOut
+                                                }
+                                            >
+                                                AGOTADO
+                                            </span>
+                                        )}
                                     </div>
 
-                                    <div style={styles.cardContent}>
-
-                                        <span style={styles.cardBrand}>
+                                    <div
+                                        style={
+                                            styles.cardContent
+                                        }
+                                    >
+                                        <span
+                                            style={
+                                                styles.cardBrand
+                                            }
+                                        >
                                             LUXORSHOP
                                         </span>
 
-                                        <h3 style={styles.cardTitle}>
-                                            {producto.nombre}
+                                        <h3
+                                            style={
+                                                styles.cardTitle
+                                            }
+                                        >
+                                            {
+                                                producto.nombre
+                                            }
                                         </h3>
 
-                                        <p style={styles.cardMeasure}>
-                                            {producto.medida}
+                                        <p
+                                            style={
+                                                styles.cardMeasure
+                                            }
+                                        >
+                                            {
+                                                producto.medida
+                                            }
                                         </p>
 
-                                        <div style={styles.cardBottom}>
-
-                                            <strong style={styles.cardPrice}>
+                                        <div
+                                            style={
+                                                styles.cardBottom
+                                            }
+                                        >
+                                            <strong
+                                                style={
+                                                    styles.cardPrice
+                                                }
+                                            >
                                                 {formatoMoneda(
                                                     producto.precio
                                                 )}
@@ -942,51 +1145,54 @@ function Tienda() {
                                             <span
                                                 style={{
                                                     color:
-                                                        producto.stock > 0
+                                                        producto.stock >
+                                                        0
                                                             ? "#26734d"
                                                             : "#b42318",
-                                                    fontSize: "12px"
+                                                    fontSize:
+                                                        "12px",
+                                                    fontWeight:
+                                                        "500"
                                                 }}
                                             >
-                                                {producto.stock > 0
+                                                {producto.stock >
+                                                0
                                                     ? "Disponible"
                                                     : "Agotado"}
                                             </span>
-
                                         </div>
 
                                         <button
                                             onClick={() =>
-                                                setProductoSeleccionado(
+                                                seleccionarProducto(
                                                     producto
                                                 )
                                             }
-                                            style={styles.cardButton}
+                                            style={
+                                                styles.cardButton
+                                            }
                                         >
                                             VER PRODUCTO
                                         </button>
-
                                     </div>
-
                                 </article>
                             );
                         })}
-
                     </div>
                 )}
-
             </section>
-
 
             {/* BANNER */}
 
             <section style={styles.banner}>
-
                 <div style={styles.bannerOverlay} />
 
-                <div style={styles.bannerContent}>
-
-                    <span style={styles.heroEyebrow}>
+                <div
+                    style={styles.bannerContent}
+                >
+                    <span
+                        style={styles.heroEyebrow}
+                    >
                         LUXORSHOP
                     </span>
 
@@ -1007,50 +1213,59 @@ function Tienda() {
                     >
                         VER COLECCIÓN
                     </a>
-
                 </div>
-
             </section>
-
 
             {/* NOSOTROS */}
 
             <section
                 id="nosotros"
                 style={styles.about}
+                className="luxor-about"
             >
-
                 <div style={styles.aboutText}>
-
                     <span style={styles.eyebrow}>
                         SOBRE LUXORSHOP
                     </span>
 
-                    <h2 style={styles.aboutTitle}>
+                    <h2
+                        style={styles.aboutTitle}
+                    >
                         El brillo de una
                         <br />
                         historia única.
                     </h2>
 
-                    <p style={styles.aboutParagraph}>
-                        Cada pieza representa algo diferente:
-                        amor, celebración, compromiso o simplemente
-                        el deseo de regalar algo especial.
+                    <p
+                        style={
+                            styles.aboutParagraph
+                        }
+                    >
+                        Cada pieza representa algo
+                        diferente: amor, celebración,
+                        compromiso o simplemente el
+                        deseo de regalar algo especial.
                     </p>
 
-                    <p style={styles.aboutParagraph}>
-                        En LuxorShop buscamos que la experiencia
-                        de elegir una joya sea tan especial como
-                        el momento para el que fue elegida.
+                    <p
+                        style={
+                            styles.aboutParagraph
+                        }
+                    >
+                        En LuxorShop buscamos que la
+                        experiencia de elegir una joya
+                        sea tan especial como el momento
+                        para el que fue elegida.
                     </p>
-
                 </div>
 
-                <div style={styles.aboutImage}>
-
+                <div
+                    style={styles.aboutImage}
+                >
                     {productoDestacado &&
-                    obtenerUrlImagen(productoDestacado.imagen) ? (
-
+                    obtenerUrlImagen(
+                        productoDestacado.imagen
+                    ) ? (
                         <img
                             src={obtenerUrlImagen(
                                 productoDestacado.imagen
@@ -1058,19 +1273,17 @@ function Tienda() {
                             alt=""
                             style={styles.fullImage}
                         />
-
                     ) : (
-
-                        <div style={styles.noImageLarge}>
+                        <div
+                            style={
+                                styles.noImageLarge
+                            }
+                        >
                             💎
                         </div>
-
                     )}
-
                 </div>
-
             </section>
-
 
             {/* CONTACTO */}
 
@@ -1078,18 +1291,20 @@ function Tienda() {
                 id="contacto"
                 style={styles.contact}
             >
-
                 <span style={styles.eyebrow}>
                     ¿TIENES ALGUNA PREGUNTA?
                 </span>
 
-                <h2 style={styles.contactTitle}>
+                <h2
+                    style={styles.contactTitle}
+                >
                     Estamos para ayudarte.
                 </h2>
 
                 <p style={styles.sectionText}>
-                    Habla directamente con nosotros y recibe
-                    atención personalizada para elegir tu pieza.
+                    Habla directamente con nosotros
+                    y recibe atención personalizada
+                    para elegir tu pieza.
                 </p>
 
                 <a
@@ -1100,71 +1315,75 @@ function Tienda() {
                 >
                     💬 HABLAR CON UN ASESOR
                 </a>
-
             </section>
 
-
             <Footer />
-
         </div>
     );
 }
 
-
 /*
- * ================================
+ * ==========================================
  * COMPONENTES
- * ================================
+ * ==========================================
  */
 
 function Benefit({ icon, title, text }) {
-
     return (
         <div style={styles.benefit}>
-
             <div style={styles.benefitIcon}>
                 {icon}
             </div>
 
-            <strong style={styles.benefitTitle}>
+            <strong
+                style={styles.benefitTitle}
+            >
                 {title}
             </strong>
 
             <span style={styles.benefitText}>
                 {text}
             </span>
-
         </div>
     );
 }
 
-
 function Footer() {
-
     return (
         <footer
             id="footer"
             style={styles.footer}
         >
-
-            <div style={styles.footerGrid}>
-
+            <div
+                style={styles.footerGrid}
+                className="luxor-footer-grid"
+            >
                 <div>
-
-                    <div style={styles.footerLogo}>
+                    <div
+                        style={
+                            styles.footerLogo
+                        }
+                    >
                         LUXORSHOP
                     </div>
 
-                    <p style={styles.footerDescription}>
-                        Joyas que representan momentos únicos.
-                        Piezas elegidas para permanecer en el tiempo.
+                    <p
+                        style={
+                            styles.footerDescription
+                        }
+                    >
+                        Joyas que representan momentos
+                        únicos. Piezas elegidas para
+                        permanecer en el tiempo.
                     </p>
-
                 </div>
 
                 <div>
-
-                    <h4 style={styles.footerHeading}>
+                    <h4
+                        style={
+                            styles.footerHeading
+                        }
+                    >
                         EXPLORA
                     </h4>
 
@@ -1188,44 +1407,48 @@ function Footer() {
                     >
                         Contacto
                     </a>
-
                 </div>
 
                 <div>
-
-                    <h4 style={styles.footerHeading}>
+                    <h4
+                        style={
+                            styles.footerHeading
+                        }
+                    >
                         CONTACTO
                     </h4>
 
-                    <p style={styles.footerContact}>
+                    <p
+                        style={
+                            styles.footerContact
+                        }
+                    >
                         Medellín, Colombia
                         <br />
                         WhatsApp
                         <br />
                         +57 304 419 0015
                     </p>
-
                 </div>
-
             </div>
 
-            <div style={styles.footerBottom}>
-                © 2026 LuxorShop · Joyas que nunca pasan de moda.
+            <div
+                style={styles.footerBottom}
+            >
+                © 2026 LuxorShop · Joyas que nunca
+                pasan de moda.
             </div>
-
         </footer>
     );
 }
 
-
 /*
- * ================================
+ * ==========================================
  * ESTILOS
- * ================================
+ * ==========================================
  */
 
 const styles = {
-
     page: {
         minHeight: "100vh",
         backgroundColor: "#fff",
@@ -1246,6 +1469,14 @@ const styles = {
         zIndex: 20
     },
 
+    mobileBackButton: {
+        display: "none",
+        background: "none",
+        border: "none",
+        fontSize: "24px",
+        cursor: "pointer"
+    },
+
     logo: {
         fontSize: "24px",
         fontWeight: "600",
@@ -1262,7 +1493,8 @@ const styles = {
         color: "#111",
         textDecoration: "none",
         fontSize: "12px",
-        letterSpacing: "2px"
+        letterSpacing: "2px",
+        transition: "opacity .2s ease"
     },
 
     headerButton: {
@@ -1277,18 +1509,18 @@ const styles = {
     hero: {
         minHeight: "700px",
         position: "relative",
-        backgroundSize: "85% auto",
+        backgroundSize: "cover",
         backgroundPosition: "center",
         display: "flex",
-        alignItems: "center"
-
+        alignItems: "center",
+        overflow: "hidden"
     },
 
     heroOverlay: {
         position: "absolute",
         inset: 0,
         background:
-            "linear-gradient(90deg,rgba(0,0,0,.72),rgba(0,0,0,.30),rgba(0,0,0,.08))"
+            "linear-gradient(90deg,rgba(0,0,0,.76),rgba(0,0,0,.34),rgba(0,0,0,.08))"
     },
 
     heroContent: {
@@ -1331,7 +1563,9 @@ const styles = {
         textDecoration: "none",
         fontSize: "11px",
         letterSpacing: "2px",
-        fontWeight: "600"
+        fontWeight: "600",
+        transition:
+            "transform .2s ease, background .2s ease"
     },
 
     benefits: {
@@ -1342,7 +1576,7 @@ const styles = {
     },
 
     benefit: {
-        padding: "38px 20px",
+        padding: "42px 20px",
         textAlign: "center",
         borderRight: "1px solid #eee"
     },
@@ -1428,7 +1662,8 @@ const styles = {
         backgroundColor: "#fff",
         overflow: "hidden",
         boxShadow:
-            "0 4px 25px rgba(0,0,0,.06)"
+            "0 4px 25px rgba(0,0,0,.06)",
+        border: "1px solid #f0f0f0"
     },
 
     cardImage: {
@@ -1471,6 +1706,17 @@ const styles = {
         top: "18px",
         left: "18px",
         backgroundColor: "#111",
+        color: "#fff",
+        padding: "8px 12px",
+        fontSize: "9px",
+        letterSpacing: "1.5px"
+    },
+
+    soldOut: {
+        position: "absolute",
+        top: "18px",
+        left: "18px",
+        backgroundColor: "#b42318",
         color: "#fff",
         padding: "8px 12px",
         fontSize: "9px",
@@ -1522,7 +1768,9 @@ const styles = {
         color: "#fff",
         cursor: "pointer",
         fontSize: "11px",
-        letterSpacing: "2px"
+        letterSpacing: "2px",
+        transition:
+            "background .2s ease, color .2s ease"
     },
 
     banner: {
@@ -1542,8 +1790,7 @@ const styles = {
     bannerOverlay: {
         position: "absolute",
         inset: 0,
-        background:
-            "rgba(0,0,0,.38)"
+        background: "rgba(0,0,0,.38)"
     },
 
     bannerContent: {
@@ -1618,7 +1865,8 @@ const styles = {
         maxWidth: "1100px",
         margin: "0 auto 60px",
         display: "grid",
-        gridTemplateColumns: "2fr 1fr 1fr",
+        gridTemplateColumns:
+            "2fr 1fr 1fr",
         gap: "50px"
     },
 
@@ -1665,7 +1913,8 @@ const styles = {
     },
 
     checkoutMain: {
-        minHeight: "calc(100vh - 82px)",
+        minHeight:
+            "calc(100vh - 82px)",
         padding: "70px 25px",
         backgroundColor: "#f7f7f5"
     },
@@ -1675,7 +1924,8 @@ const styles = {
         margin: "0 auto",
         backgroundColor: "#fff",
         padding: "50px",
-        boxShadow: "0 5px 30px rgba(0,0,0,.06)"
+        boxShadow:
+            "0 5px 30px rgba(0,0,0,.06)"
     },
 
     checkoutTitle: {
@@ -1714,7 +1964,9 @@ const styles = {
         border: "1px solid #ddd",
         outline: "none",
         fontSize: "14px",
-        boxSizing: "border-box"
+        boxSizing: "border-box",
+        transition:
+            "border .2s ease, box-shadow .2s ease"
     },
 
     orderSummary: {
@@ -1853,7 +2105,8 @@ const styles = {
 
     productPrice: {
         fontSize: "30px",
-        marginTop: "25px"
+        marginTop: "25px",
+        fontWeight: "500"
     },
 
     separator: {
@@ -1905,9 +2158,14 @@ const styles = {
 
     legacySection: {
         display: "grid",
-        gridTemplateColumns: "1fr 1fr",
+        gridTemplateColumns:
+            "1fr 1fr",
         backgroundColor: "#111",
         color: "#fff"
+    },
+
+    legacyContent: {
+        padding: "80px"
     },
 
     legacyTitle: {
@@ -1920,189 +2178,369 @@ const styles = {
         maxWidth: "520px",
         color: "#aaa",
         lineHeight: "1.9"
+    },
+
+    empty: {
+        maxWidth: "1100px",
+        margin: "50px auto",
+        padding: "60px",
+        textAlign: "center",
+        color: "#777",
+        backgroundColor: "#fff",
+        border: "1px solid #eee"
     }
 };
 
-
 const responsiveStyles = `
-    * {
-        box-sizing: border-box;
-    }
+* {
+    box-sizing: border-box;
+}
 
-    html {
-        scroll-behavior: smooth;
-    }
+html {
+    scroll-behavior: smooth;
+}
 
-    body {
-        margin: 0;
-    }
+body {
+    margin: 0;
+    overflow-x: hidden;
+}
+
+button,
+a,
+input {
+    -webkit-tap-highlight-color: transparent;
+}
+
+.luxor-card {
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+}
+
+.luxor-card:hover {
+    transform: translateY(-6px);
+    box-shadow:
+        0 18px 45px rgba(0,0,0,.12) !important;
+}
+
+.luxor-card img {
+    transition: transform .5s ease;
+}
+
+.luxor-card:hover img {
+    transform: scale(1.04);
+}
+
+.luxor-card button:hover {
+    background: #fff !important;
+    color: #111 !important;
+}
+
+.luxor-header a:hover {
+    opacity: .55;
+}
+
+.luxor-header button:hover {
+    opacity: .55;
+}
+
+.luxor-hero a:hover {
+    transform: translateY(-2px);
+}
+
+input:focus {
+    border-color: #111 !important;
+    box-shadow: 0 0 0 2px rgba(0,0,0,.05);
+}
+
+@media (max-width: 850px) {
 
     .luxor-card {
-        transition:
-            transform .3s ease,
-            box-shadow .3s ease;
+        max-width: 520px;
+        width: 100%;
+        margin: 0 auto;
     }
 
-    .luxor-card:hover {
-        transform: translateY(-5px);
-        box-shadow:
-            0 15px 40px rgba(0,0,0,.12) !important;
+}
+
+@media (max-width: 768px) {
+
+    .luxor-header {
+        height: auto !important;
+        min-height: 72px;
+        padding: 18px 20px !important;
+        flex-direction: column;
+        gap: 18px;
     }
 
-    .luxor-card img {
-        transition: transform .5s ease;
+    .luxor-header nav {
+        gap: 14px !important;
+        flex-wrap: wrap;
+        justify-content: center;
     }
 
-    .luxor-card:hover img {
-        transform: scale(1.04);
+    .luxor-header a,
+    .luxor-header button {
+        font-size: 10px !important;
     }
 
-    @media (max-width: 850px) {
-
-        .luxor-card {
-            max-width: 520px;
-            margin: 0 auto;
-        }
-
+    .luxor-hero {
+        min-height: 620px !important;
+        background-position: center !important;
     }
 
-    @media (max-width: 768px) {
-
-        .luxor-header {
-            height: auto !important;
-            min-height: 75px;
-            padding: 18px 20px !important;
-            flex-direction: column;
-            gap: 18px;
-        }
-
-        .luxor-header nav {
-            gap: 15px !important;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .luxor-header a,
-        .luxor-header button {
-            font-size: 10px !important;
-        }
-
-        .luxor-hero {
-            min-height: 620px !important;
-            background-position: center !important;
-        }
-
-        .luxor-hero-content {
-            padding: 30px 25px !important;
-        }
-
-        .luxor-hero h1 {
-            font-size: 43px !important;
-        }
-
-        .luxor-hero p {
-            font-size: 15px !important;
-        }
-
-        .luxor-benefits {
-            grid-template-columns: 1fr 1fr !important;
-        }
-
-        .luxor-benefits > div {
-            border-bottom: 1px solid #eee;
-        }
-
-        .luxor-collection-header {
-            flex-direction: column;
-        }
-
-        .luxor-about {
-            grid-template-columns: 1fr !important;
-        }
-
-        .luxor-product-detail {
-            grid-template-columns: 1fr !important;
-        }
-
+    .luxor-hero-content {
+        padding: 35px 25px !important;
     }
 
-    @media (max-width: 600px) {
-
-        .luxor-benefits {
-            grid-template-columns: 1fr !important;
-        }
-
-        .luxor-benefits > div {
-            border-right: none !important;
-        }
-
-        .luxor-product-grid {
-            grid-template-columns: 1fr !important;
-        }
-
-        .luxor-card-image {
-            height: 400px !important;
-        }
-
-        .luxor-checkout-grid {
-            grid-template-columns: 1fr !important;
-        }
-
-        .luxor-order-summary {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-        }
-
-        .luxor-footer-grid {
-            grid-template-columns: 1fr !important;
-        }
-
-        .luxor-legacy {
-            grid-template-columns: 1fr !important;
-        }
-
-        .luxor-legacy > div:first-child {
-            padding: 55px 25px !important;
-        }
-
-        .luxor-product-main {
-            padding: 35px 20px 70px !important;
-        }
-
-        .luxor-product-image {
-            height: 420px !important;
-        }
-
-        .luxor-product-title {
-            font-size: 37px !important;
-        }
-
+    .luxor-hero-title {
+        font-size: 47px !important;
     }
 
-    @media (max-width: 480px) {
-
-        .luxor-hero h1 {
-            font-size: 36px !important;
-        }
-
-        .luxor-section-title {
-            font-size: 34px !important;
-        }
-
-        .luxor-collection {
-            padding-left: 18px !important;
-            padding-right: 18px !important;
-        }
-
-        .luxor-card-image {
-            height: 350px !important;
-        }
-
-        .luxor-checkout-card {
-            padding: 25px !important;
-        }
-
+    .luxor-hero p {
+        font-size: 15px !important;
     }
+
+    .luxor-benefits {
+        grid-template-columns: 1fr 1fr !important;
+    }
+
+    .luxor-benefits > div {
+        border-bottom: 1px solid #eee;
+    }
+
+    .luxor-collection-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 15px;
+    }
+
+    .luxor-about {
+        grid-template-columns: 1fr !important;
+    }
+
+    .luxor-about > div:first-child {
+        padding: 60px 25px !important;
+    }
+
+    .luxor-product-detail {
+        grid-template-columns: 1fr !important;
+        gap: 35px !important;
+    }
+
+    .luxor-product-image {
+        height: 550px !important;
+    }
+
+    .luxor-legacy {
+        grid-template-columns: 1fr !important;
+    }
+
+    .luxor-legacy > div:first-child {
+        padding: 60px 25px !important;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .luxor-header {
+        flex-direction: column;
+    }
+
+    .luxor-benefits {
+        grid-template-columns: 1fr !important;
+    }
+
+    .luxor-benefits > div {
+        border-right: none !important;
+    }
+
+    .luxor-product-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .luxor-card-image {
+        height: 400px !important;
+    }
+
+    .luxor-checkout-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .luxor-checkout-card {
+        padding: 28px 20px !important;
+    }
+
+    .luxor-checkout-card h1 {
+        font-size: 34px !important;
+    }
+
+    .luxor-order-summary {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+
+    .luxor-order-image {
+        width: 100% !important;
+        height: 250px !important;
+    }
+
+    .luxor-order-summary > div:last-child {
+        margin-left: 0 !important;
+    }
+
+    .luxor-footer-grid {
+        grid-template-columns: 1fr !important;
+        gap: 35px !important;
+    }
+
+    .luxor-product-main {
+        padding: 35px 20px 70px !important;
+    }
+
+    .luxor-product-image {
+        height: 430px !important;
+    }
+
+    .luxor-product-title {
+        font-size: 38px !important;
+    }
+
+    .luxor-section-title {
+        font-size: 34px !important;
+    }
+
+    .luxor-collection {
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+    }
+
+    .luxor-about h2 {
+        font-size: 39px !important;
+    }
+
+    .luxor-about p {
+        font-size: 14px !important;
+    }
+
+    .luxor-legacy > div:first-child {
+        padding: 55px 25px !important;
+    }
+
+    .luxor-legacy h2 {
+        font-size: 38px !important;
+    }
+
+    .luxor-hero-title {
+        font-size: 39px !important;
+    }
+
+    .luxor-hero {
+        min-height: 580px !important;
+    }
+
+}
+
+@media (max-width: 480px) {
+
+    .luxor-header {
+        padding: 16px 15px !important;
+    }
+
+    .luxor-header .logo {
+        font-size: 20px !important;
+    }
+
+    .luxor-hero-title {
+        font-size: 34px !important;
+        letter-spacing: -1px !important;
+    }
+
+    .luxor-hero-content {
+        padding: 30px 20px !important;
+    }
+
+    .luxor-hero p {
+        font-size: 14px !important;
+        line-height: 1.7 !important;
+    }
+
+    .luxor-hero a {
+        width: 100%;
+        text-align: center;
+    }
+
+    .luxor-card-image {
+        height: 350px !important;
+    }
+
+    .luxor-card-content {
+        padding: 22px !important;
+    }
+
+    .luxor-product-image {
+        height: 370px !important;
+    }
+
+    .luxor-product-title {
+        font-size: 34px !important;
+    }
+
+    .luxor-product-detail {
+        gap: 25px !important;
+    }
+
+    .luxor-advisor {
+        flex-wrap: wrap !important;
+    }
+
+    .luxor-advisor a {
+        width: 100%;
+        margin-left: 0 !important;
+        text-align: center;
+        padding: 12px;
+        border: 1px solid #ddd;
+    }
+
+    .luxor-checkout-card {
+        padding: 25px 18px !important;
+    }
+
+    .luxor-checkout-card h1 {
+        font-size: 30px !important;
+    }
+
+    .luxor-order-summary {
+        padding: 18px !important;
+    }
+
+    .luxor-order-image {
+        height: 220px !important;
+    }
+
+    .luxor-collection {
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+    }
+
+    .luxor-collection h2 {
+        font-size: 31px !important;
+    }
+
+    .luxor-about h2 {
+        font-size: 34px !important;
+    }
+
+    .luxor-legacy h2 {
+        font-size: 34px !important;
+    }
+
+    .luxor-contact {
+        padding: 70px 20px !important;
+    }
+
+}
 `;
 
 export default Tienda;
