@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/usuarios";
+const API_URL = "https://jewelryerp-backend.onrender.com/usuarios";
 
 export const login = (credenciales) => {
     return axios.post(`${API_URL}/login`, credenciales);
