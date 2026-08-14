@@ -8,23 +8,22 @@ import org.springframework.data.jpa.repository.Query;
 import com.lux.backend.dto.VentaMesDTO;
 import com.lux.backend.entity.Venta;
 
-public interface VentaRepository
-        extends JpaRepository<Venta, Long> {
+public interface VentaRepository extends JpaRepository<Venta, Long> {
 
     @Query("""
         SELECT new com.lux.backend.dto.VentaMesDTO(
-            MONTHNAME(v.fecha),
-            YEAR(v.fecha),
-            SUM(v.total)
+            function('to_char', v.fecha, 'TMMonth'),
+            year(v.fecha),
+            sum(v.total)
         )
         FROM Venta v
         GROUP BY
-            YEAR(v.fecha),
-            MONTH(v.fecha),
-            MONTHNAME(v.fecha)
+            year(v.fecha),
+            month(v.fecha),
+            function('to_char', v.fecha, 'TMMonth')
         ORDER BY
-            YEAR(v.fecha),
-            MONTH(v.fecha)
+            year(v.fecha),
+            month(v.fecha)
     """)
     List<VentaMesDTO> obtenerVentasPorMes();
 
