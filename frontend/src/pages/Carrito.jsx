@@ -129,7 +129,7 @@ function Carrito() {
 
             const clienteRespuesta =
                 await axios.post(
-                    "http://localhost:8080/clientes",
+                    "https://jewelryerp-backend.onrender.com/clientes",
                     {
                         nombre,
                         telefono,
@@ -145,7 +145,7 @@ function Carrito() {
             // CREAR VENTA
 
             await axios.post(
-                "http://localhost:8080/ventas",
+                "https://jewelryerp-backend.onrender.com/ventas",
                 {
                     clienteId,
                     productos:
@@ -410,7 +410,7 @@ function Carrito() {
 
                                                 <img
                                                     src={
-                                                        `http://localhost:8080${producto.imagen}`
+                                                        `https://jewelryerp-backend.onrender.com${producto.imagen}`
                                                     }
                                                     alt={
                                                         producto.nombre

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/configuracion";
+const API_URL = "https://jewelryerp-backend.onrender.com/configuracion";
 
 export const obtenerConfiguracion = () => {
     return axios.get(API_URL);

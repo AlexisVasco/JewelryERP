@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { listarProductos } from "../services/productoService";
 
+const API_BASE_URL = "https://jewelryerp-backend.onrender.com";
+
 function Tienda() {
     const [productos, setProductos] = useState([]);
     const [productoSeleccionado, setProductoSeleccionado] = useState(null);
@@ -44,7 +46,7 @@ function Tienda() {
             return imagen;
         }
 
-        return `http://localhost:8080${imagen}`;
+        return `${API_BASE_URL}${imagen}`;
     };
 
     const productoDestacado =
@@ -282,8 +284,7 @@ function Tienda() {
                                                 setCantidad(
                                                     Math.max(
                                                         1,
-                                                        cantidad -
-                                                            1
+                                                        cantidad - 1
                                                     )
                                                 )
                                             }
@@ -303,8 +304,7 @@ function Tienda() {
                                                 setCantidad(
                                                     Math.min(
                                                         productoSeleccionado.stock,
-                                                        cantidad +
-                                                            1
+                                                        cantidad + 1
                                                     )
                                                 )
                                             }
@@ -383,7 +383,7 @@ function Tienda() {
                                 try {
                                     const clienteRespuesta =
                                         await axios.post(
-                                            "http://localhost:8080/clientes",
+                                            `${API_BASE_URL}/clientes`,
                                             {
                                                 nombre:
                                                     nombreCliente.trim(),
@@ -398,7 +398,7 @@ function Tienda() {
                                         clienteRespuesta.data.id;
 
                                     await axios.post(
-                                        "http://localhost:8080/ventas",
+                                        `${API_BASE_URL}/ventas`,
                                         {
                                             clienteId,
                                             productos: [
@@ -416,13 +416,9 @@ function Tienda() {
                                     );
 
                                     setProductos(
-                                        (
-                                            productosActuales
-                                        ) =>
+                                        (productosActuales) =>
                                             productosActuales.map(
-                                                (
-                                                    producto
-                                                ) =>
+                                                (producto) =>
                                                     producto.id ===
                                                     productoSeleccionado.id
                                                         ? {
@@ -435,9 +431,7 @@ function Tienda() {
                                             )
                                     );
 
-                                    setProductoSeleccionado(
-                                        null
-                                    );
+                                    setProductoSeleccionado(null);
                                     setMostrarCompra(false);
                                     setNombreCliente("");
                                     setTelefono("");
@@ -447,8 +441,7 @@ function Tienda() {
 
                                     window.scrollTo({
                                         top: 0,
-                                        behavior:
-                                            "smooth"
+                                        behavior: "smooth"
                                     });
                                 } catch (error) {
                                     console.error(
@@ -650,8 +643,7 @@ function Tienda() {
                                                     setCantidad(
                                                         Math.max(
                                                             1,
-                                                            cantidad -
-                                                                1
+                                                            cantidad - 1
                                                         )
                                                     )
                                                 }
@@ -673,8 +665,7 @@ function Tienda() {
                                                     setCantidad(
                                                         Math.min(
                                                             productoSeleccionado.stock,
-                                                            cantidad +
-                                                                1
+                                                            cantidad + 1
                                                         )
                                                     )
                                                 }
@@ -750,7 +741,9 @@ function Tienda() {
                                 </div>
 
                                 <a
-                                    href="https://wa.me/573044190015"
+                                    href={`https://wa.me/573044190015?text=${encodeURIComponent(
+                                        `Hola, estoy interesado en comprar el producto ${productoSeleccionado.nombre}. Tiene un precio de ${formatoMoneda(productoSeleccionado.precio)}. ¿Me pueden dar más información sobre la compra?`
+                                    )}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     style={

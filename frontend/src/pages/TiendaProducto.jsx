@@ -18,7 +18,8 @@ function TiendaProducto() {
 
         try {
 
-            const respuesta = await obtenerProductoPorId(id);
+            const respuesta =
+                await obtenerProductoPorId(id);
 
             setProducto(respuesta.data);
 
@@ -50,6 +51,23 @@ function TiendaProducto() {
 
     };
 
+    const obtenerUrlImagen = (imagen) => {
+
+        if (!imagen) {
+            return "";
+        }
+
+        if (
+            imagen.startsWith("http://") ||
+            imagen.startsWith("https://")
+        ) {
+            return imagen;
+        }
+
+        return `${import.meta.env.VITE_API_URL}${imagen}`;
+
+    };
+
     const agregarAlCarrito = () => {
 
         if (!producto) {
@@ -58,7 +76,9 @@ function TiendaProducto() {
 
         if (producto.stock <= 0) {
 
-            alert("Este producto está agotado.");
+            alert(
+                "Este producto está agotado."
+            );
 
             return;
 
@@ -128,7 +148,10 @@ function TiendaProducto() {
                     id: producto.id,
                     nombre: producto.nombre,
                     medida: producto.medida,
-                    precio: Number(producto.precio),
+                    precio:
+                        Number(
+                            producto.precio
+                        ),
                     stock: producto.stock,
                     imagen: producto.imagen,
                     cantidad: cantidad
@@ -207,6 +230,11 @@ function TiendaProducto() {
 
     }
 
+    const imagenProducto =
+        obtenerUrlImagen(
+            producto.imagen
+        );
+
     return (
 
         <div
@@ -224,7 +252,8 @@ function TiendaProducto() {
                     color: "#fff",
                     padding: "20px 40px",
                     display: "flex",
-                    justifyContent: "space-between",
+                    justifyContent:
+                        "space-between",
                     alignItems: "center"
                 }}
             >
@@ -250,7 +279,8 @@ function TiendaProducto() {
                         href="/carrito"
                         style={{
                             color: "#fff",
-                            textDecoration: "none",
+                            textDecoration:
+                                "none",
                             fontWeight: "bold"
                         }}
                     >
@@ -261,7 +291,8 @@ function TiendaProducto() {
                         href="/tienda"
                         style={{
                             color: "#fff",
-                            textDecoration: "none"
+                            textDecoration:
+                                "none"
                         }}
                     >
                         ← Volver al catálogo
@@ -270,7 +301,6 @@ function TiendaProducto() {
                 </div>
 
             </header>
-
 
             {/* PRODUCTO */}
 
@@ -299,17 +329,16 @@ function TiendaProducto() {
                         borderRadius: "10px",
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center",
+                        justifyContent:
+                            "center",
                         overflow: "hidden"
                     }}
                 >
 
-                    {producto.imagen ? (
+                    {imagenProducto ? (
 
                         <img
-                            src={
-                                `http://localhost:8080${producto.imagen}`
-                            }
+                            src={imagenProducto}
                             alt={producto.nombre}
                             style={{
                                 width: "100%",
@@ -332,7 +361,6 @@ function TiendaProducto() {
 
                 </div>
 
-
                 {/* INFORMACIÓN */}
 
                 <div>
@@ -346,7 +374,6 @@ function TiendaProducto() {
                         {producto.nombre}
                     </h1>
 
-
                     <p
                         style={{
                             color: "#777",
@@ -355,7 +382,6 @@ function TiendaProducto() {
                     >
                         Medida: {producto.medida}
                     </p>
-
 
                     <h2
                         style={{
@@ -368,7 +394,6 @@ function TiendaProducto() {
                             producto.precio
                         )}
                     </h2>
-
 
                     <p
                         style={{
@@ -387,7 +412,6 @@ function TiendaProducto() {
                         }
                     </p>
 
-
                     {/* CANTIDAD */}
 
                     {producto.stock > 0 && (
@@ -401,8 +425,10 @@ function TiendaProducto() {
                             <label
                                 style={{
                                     display: "block",
-                                    marginBottom: "8px",
-                                    fontWeight: "bold"
+                                    marginBottom:
+                                        "8px",
+                                    fontWeight:
+                                        "bold"
                                 }}
                             >
                                 Cantidad
@@ -411,7 +437,8 @@ function TiendaProducto() {
                             <div
                                 style={{
                                     display: "flex",
-                                    alignItems: "center",
+                                    alignItems:
+                                        "center",
                                     gap: "10px"
                                 }}
                             >
@@ -421,7 +448,8 @@ function TiendaProducto() {
                                         setCantidad(
                                             Math.max(
                                                 1,
-                                                cantidad - 1
+                                                cantidad -
+                                                    1
                                             )
                                         )
                                     }
@@ -445,7 +473,8 @@ function TiendaProducto() {
 
                                 <strong
                                     style={{
-                                        minWidth: "30px",
+                                        minWidth:
+                                            "30px",
                                         textAlign:
                                             "center",
                                         fontSize:
@@ -460,7 +489,8 @@ function TiendaProducto() {
                                         setCantidad(
                                             Math.min(
                                                 producto.stock,
-                                                cantidad + 1
+                                                cantidad +
+                                                    1
                                             )
                                         )
                                     }
@@ -500,7 +530,6 @@ function TiendaProducto() {
 
                     )}
 
-
                     {/* AGREGAR AL CARRITO */}
 
                     <button
@@ -533,7 +562,6 @@ function TiendaProducto() {
                             ? "🛒 Agregar al carrito"
                             : "Producto agotado"}
                     </button>
-
 
                     {/* WHATSAPP */}
 
@@ -568,7 +596,6 @@ function TiendaProducto() {
                             : "Producto agotado"}
                     </button>
 
-
                     {/* IR AL CARRITO */}
 
                     <a
@@ -579,7 +606,8 @@ function TiendaProducto() {
                             marginTop: "15px",
                             color: "#111",
                             fontWeight: "bold",
-                            textDecoration: "none"
+                            textDecoration:
+                                "none"
                         }}
                     >
                         🛒 Ver mi carrito

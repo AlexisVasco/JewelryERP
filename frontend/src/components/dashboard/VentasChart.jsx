@@ -9,7 +9,8 @@ import {
     LineElement,
     Title,
     Tooltip,
-    Legend
+    Legend,
+    Filler
 } from "chart.js";
 
 import { Line } from "react-chartjs-2";
@@ -21,7 +22,8 @@ ChartJS.register(
     LineElement,
     Title,
     Tooltip,
-    Legend
+    Legend,
+    Filler
 );
 
 function VentasChart() {
@@ -37,10 +39,32 @@ function VentasChart() {
         try {
 
             const respuesta = await axios.get(
-                "http://localhost:8080/ventas/por-mes"
+                `${import.meta.env.VITE_API_URL}/ventas/por-mes`
             );
 
-            setVentas(respuesta.data);
+            /*
+             * Nos aseguramos de que ventas siempre
+             * sea un arreglo.
+             */
+
+            if (Array.isArray(respuesta.data)) {
+
+                setVentas(respuesta.data);
+
+            } else if (Array.isArray(respuesta.data?.ventas)) {
+
+                setVentas(respuesta.data.ventas);
+
+            } else {
+
+                console.warn(
+                    "La respuesta de ventas no tiene el formato esperado:",
+                    respuesta.data
+                );
+
+                setVentas([]);
+
+            }
 
         } catch (error) {
 
@@ -49,14 +73,16 @@ function VentasChart() {
                 error
             );
 
+            setVentas([]);
+
         }
 
     };
 
-
     /*
      * Nombres de los meses.
      */
+
     const meses = [
         "Enero",
         "Febrero",
@@ -72,10 +98,10 @@ function VentasChart() {
         "Diciembre"
     ];
 
-
     /*
      * Obtenemos los últimos 6 meses.
      */
+
     const obtenerUltimosSeisMeses = () => {
 
         const resultado = [];
@@ -106,15 +132,14 @@ function VentasChart() {
 
     };
 
-
     const ultimosSeisMeses =
         obtenerUltimosSeisMeses();
-
 
     /*
      * Convierte el nombre del mes que viene
      * desde el backend a número.
      */
+
     const obtenerNumeroMes = (mes) => {
 
         if (!mes) {
@@ -170,16 +195,13 @@ function VentasChart() {
 
     };
 
-
     /*
      * Construimos los valores de la gráfica.
      *
-     * Ahora comparamos:
-     *
-     * mes + año
-     *
+     * Comparamos mes + año
      * para evitar mezclar años diferentes.
      */
+
     const valoresVentas =
         ultimosSeisMeses.map((mes) => {
 
@@ -207,18 +229,17 @@ function VentasChart() {
 
         });
 
-
     /*
      * Nombres que aparecerán debajo
      * de cada punto de la gráfica.
      */
+
     const nombresMeses =
         ultimosSeisMeses.map((mes) => {
 
             return `${mes.nombre} ${mes.anio}`;
 
         });
-
 
     const data = {
 
@@ -260,7 +281,6 @@ function VentasChart() {
         ]
 
     };
-
 
     const options = {
 
@@ -326,7 +346,6 @@ function VentasChart() {
         }
 
     };
-
 
     return (
 

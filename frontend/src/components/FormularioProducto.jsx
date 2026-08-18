@@ -18,6 +18,22 @@ function FormularioProducto({
     const [imagen, setImagen] = useState(null);
     const [vistaPrevia, setVistaPrevia] = useState("");
 
+    const obtenerUrlImagen = (imagen) => {
+
+        if (!imagen) {
+            return "";
+        }
+
+        if (
+            imagen.startsWith("http://") ||
+            imagen.startsWith("https://")
+        ) {
+            return imagen;
+        }
+
+        return `${import.meta.env.VITE_API_URL}${imagen}`;
+    };
+
     useEffect(() => {
 
         if (productoEditar) {
@@ -33,7 +49,9 @@ function FormularioProducto({
             if (productoEditar.imagen) {
 
                 setVistaPrevia(
-                    `http://localhost:8080${productoEditar.imagen}`
+                    obtenerUrlImagen(
+                        productoEditar.imagen
+                    )
                 );
 
             } else {
@@ -81,7 +99,13 @@ function FormularioProducto({
 
     const guardar = async () => {
 
-        if (!nombre || !medida || !stock || !precio || !costo) {
+        if (
+            !nombre ||
+            !medida ||
+            !stock ||
+            !precio ||
+            !costo
+        ) {
 
             alert("Complete todos los campos");
 
